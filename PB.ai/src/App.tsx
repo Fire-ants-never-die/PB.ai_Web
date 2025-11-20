@@ -1,35 +1,58 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
 
-function App() {
-  const [count, setCount] = useState(0)
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { useEffect } from "react";
+import Index from "./pages/Index";
+import NotFound from "./pages/NotFound";
+import MarketNews from "./pages/MarketNews";
+import Stocks from "./pages/Stocks";
+import Markets from "./pages/Markets";
+import Currencies from "./pages/Currencies";
+import Global from "./pages/Global";
+import Portfolio from "./pages/Portfolio";
+import Performance from "./pages/Performance";
+import Analysis from "./pages/Analysis";
+import Settings from "./pages/Settings";
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+const queryClient = new QueryClient();
 
-export default App
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+};
+
+const App = () => (
+  <QueryClientProvider client={queryClient}>
+    <TooltipProvider>
+      <Toaster />
+      <Sonner />
+      <BrowserRouter>
+        <ScrollToTop />
+        <Routes>
+          <Route path="/" element={<Index />} />
+          <Route path="/market-news" element={<MarketNews />} />
+          <Route path="/stocks" element={<Stocks />} />
+          <Route path="/markets" element={<Markets />} />
+          <Route path="/currencies" element={<Currencies />} />
+          <Route path="/global" element={<Global />} />
+          <Route path="/portfolio" element={<Portfolio />} />
+          <Route path="/performance" element={<Performance />} />
+          <Route path="/analysis" element={<Analysis />} />
+          <Route path="/settings" element={<Settings />} />
+          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </BrowserRouter>
+    </TooltipProvider>
+  </QueryClientProvider>
+);
+
+export default App;
