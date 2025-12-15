@@ -4,6 +4,7 @@ import { PageLayout } from '@/components/layout/PageLayout';
 import { useStockData, mockStocks, generatePriceHistory } from '@/utils/stocksApi';
 import { StockCard } from '@/components/stocks/StockCard';
 import { StockChart } from '@/components/stocks/StockChart';
+import { StockPriceComparisonChart } from '@/components/stocks/StockPriceComparisonChart';
 
 const Stocks = () => {
   const stocks = useStockData(mockStocks);
@@ -41,6 +42,11 @@ const Stocks = () => {
               name={selectedStock.name}
               currentPrice={selectedStock.price}
               volatility={2.5} />
+          </div>
+
+          <div className="mt-6">
+            <h2 className="text-xl font-semibold mb-4">주가 예상 비교</h2>
+            <StockPriceComparisonChart />
           </div>
         </div>
       </div>
