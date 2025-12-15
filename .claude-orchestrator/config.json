@@ -1,0 +1,12 @@
+{
+  "project": {
+    "name": "PB.ai_Web",
+    "path": "/Applications/Github/PB.ai_Web"
+  },
+  "scope": "",
+  "goals": [],
+  "platform": "web",
+  "maxTasks": 10,
+  "continuous": false,
+  "initialized": "2025-12-15T08:40:20.306Z"
+}

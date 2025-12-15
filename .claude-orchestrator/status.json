@@ -1,0 +1,25 @@
+{
+  "orchestrator": {
+    "running": false,
+    "pid": null,
+    "startedAt": null
+  },
+  "planner": {
+    "status": "idle",
+    "lastActivity": "2025-12-15T08:40:20.307Z"
+  },
+  "designer": {
+    "status": "idle",
+    "lastActivity": "2025-12-15T08:40:20.307Z"
+  },
+  "techLead": {
+    "status": "idle",
+    "lastActivity": "2025-12-15T08:40:20.307Z"
+  },
+  "developer": {
+    "status": "idle",
+    "currentTask": null,
+    "lastActivity": "2025-12-15T08:40:20.307Z"
+  },
+  "lastCycle": null
+}
