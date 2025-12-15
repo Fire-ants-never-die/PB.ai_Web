@@ -1,0 +1,18 @@
+{
+  "autoAccept": {
+    "enabled": false,
+    "allowedTools": []
+  },
+  "customInstructions": "This is a stock market MVP project. Always separate mock data from components. Use TypeScript strictly. Follow the patterns in CLAUDE.md.",
+  "temperature": 0.3,
+  "enabledPlugins": [],
+  "searchDirectories": [
+    "src/components",
+    "src/lib",
+    "src/app"
+  ],
+  "gitIntegration": {
+    "autoCommit": false,
+    "commitMessageTemplate": "feat: {description}"
+  }
+}
