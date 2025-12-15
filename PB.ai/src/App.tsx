@@ -5,20 +5,17 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { useEffect } from "react";
+import Index from "./pages/Index";
+import NotFound from "./pages/NotFound";
+import MarketNews from "./pages/MarketNews";
+import Stocks from "./pages/Stocks";
+import Markets from "./pages/Markets";
+import Currencies from "./pages/Currencies";
+import Global from "./pages/Global";
+import Portfolio from "./pages/Portfolio";
 import Performance from "./pages/Performance";
-import ChartDemo from "./pages/ChartDemo";
-
-// 임시 컴포넌트
-const Index = () => <div className="p-8"><h1 className="text-3xl font-bold">홈</h1></div>;
-const NotFound = () => <div className="p-8"><h1 className="text-3xl font-bold">404 Not Found</h1></div>;
-const MarketNews = () => <div className="p-8"><h1 className="text-3xl font-bold">시장 뉴스</h1></div>;
-const Stocks = () => <div className="p-8"><h1 className="text-3xl font-bold">주식</h1></div>;
-const Markets = () => <div className="p-8"><h1 className="text-3xl font-bold">시장</h1></div>;
-const Currencies = () => <div className="p-8"><h1 className="text-3xl font-bold">통화</h1></div>;
-const Global = () => <div className="p-8"><h1 className="text-3xl font-bold">글로벌</h1></div>;
-const Portfolio = () => <div className="p-8"><h1 className="text-3xl font-bold">포트폴리오</h1></div>;
-const Analysis = () => <div className="p-8"><h1 className="text-3xl font-bold">분석</h1></div>;
-const Settings = () => <div className="p-8"><h1 className="text-3xl font-bold">설정</h1></div>;
+import Analysis from "./pages/Analysis";
+import Settings from "./pages/Settings";
 
 const queryClient = new QueryClient();
 
@@ -41,7 +38,6 @@ const App = () => (
         <ScrollToTop />
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/chart-demo" element={<ChartDemo />} />
           <Route path="/market-news" element={<MarketNews />} />
           <Route path="/stocks" element={<Stocks />} />
           <Route path="/markets" element={<Markets />} />
