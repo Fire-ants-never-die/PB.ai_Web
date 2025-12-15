@@ -1,5 +1,4 @@
 
-import React from 'react';
 import { PageLayout } from '@/components/layout/PageLayout';
 import { CurrencyExchange } from '@/components/currencies/CurrencyExchange';
 import { useCurrencyPairs, mockCurrencies } from '@/utils/stocksApi';

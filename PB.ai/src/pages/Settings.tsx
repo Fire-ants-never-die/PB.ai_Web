@@ -1,5 +1,4 @@
 
-import React from 'react';
 import { PageLayout } from '@/components/layout/PageLayout';
 import { Button } from '@/components/ui/button';
 import { Bell, Globe, Lock, User, Settings as SettingsIcon } from 'lucide-react';
