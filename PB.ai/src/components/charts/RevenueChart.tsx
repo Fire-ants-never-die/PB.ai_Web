@@ -167,7 +167,7 @@ export function RevenueChart({ data, className }: RevenueChartProps) {
       </ResponsiveContainer>
 
       {/* 범례 */}
-      <div className="mt-4 flex items-center justify-center gap-2">
+      <div className="mt-2 flex items-center justify-center gap-2">
         <div
           className="h-3 w-3 rounded-sm"
           style={{ backgroundColor: 'hsl(var(--graph-yellow))' }}

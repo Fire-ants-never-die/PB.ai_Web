@@ -126,7 +126,7 @@ const CompanyOverview = () => {
               </div>
 
               {/* 재무 데이터 표 */}
-              <div className="mt-1">
+              <div className="mt-6">
                 <FinancialDataTable data={financialTableData} />
               </div>
             </div>

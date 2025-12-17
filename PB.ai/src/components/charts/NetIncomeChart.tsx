@@ -110,7 +110,7 @@ function CustomTooltip({ active, payload }: any) {
 // 커스텀 범례
 function CustomLegend() {
   return (
-    <div className="flex items-center justify-center gap-4 mt-4">
+    <div className="flex items-center justify-center gap-4 mb-4">
       <div className="flex items-center gap-2">
         <div className="h-3 w-3 rounded-sm bg-[#5797F7]" />
         <span className="text-sm text-[#58595B]">순이익</span>
@@ -189,7 +189,7 @@ export function NetIncomeChart({ data, className }: NetIncomeChartProps) {
           {/* 왼쪽 Y축 - 순이익률 */}
           <YAxis
             yAxisId="left"
-            width={40}
+            width={8}
             tickFormatter={leftYAxisTickFormatter}
             tick={{ fill: '#58595B', fontSize: 12 }}
             tickLine={false}
@@ -239,7 +239,9 @@ export function NetIncomeChart({ data, className }: NetIncomeChartProps) {
         </ComposedChart>
       </ResponsiveContainer>
 
-      <CustomLegend />
+      <div className="mt-2">
+        <CustomLegend />
+      </div>
     </div>
   );
 }
