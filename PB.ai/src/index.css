@@ -61,6 +61,21 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  /* Hide scrollbars globally while keeping scroll functionality */
+  *,
+  *::-webkit-scrollbar {
+    scrollbar-width: none;
+  }
+
+  *::-webkit-scrollbar {
+    display: none;
+  }
+
+  html,
+  body {
+    -ms-overflow-style: none;
+  }
 }
 
 /* Custom card styles - no default shadow, light border, hover shadow */

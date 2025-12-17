@@ -3,7 +3,6 @@ import { PageLayout } from '@/components/layout/PageLayout';
 import { CompanyTabs } from '@/components/company/CompanyTabs';
 import { CompanyProfile } from '@/components/company/CompanyProfile';
 import { SalesComposition } from '@/components/company/SalesComposition';
-import { FinancialStatus } from '@/components/company/FinancialStatus';
 import { FinancialHealth } from '@/components/company/FinancialHealth';
 import { IndustryDescription } from '@/components/company/IndustryDescription';
 import { RevenueChartExample } from '@/components/company/RevenueChartExample';

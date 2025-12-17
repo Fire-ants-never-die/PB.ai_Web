@@ -262,3 +262,4 @@ export const fieldLabels = {
   operatingIncome: '영업이익',
   netIncome: '순이익',
 };
+

@@ -25,7 +25,7 @@ export function FloatingActionButton({ className }: FloatingActionButtonProps) {
       )}
       style={{
         top: '50%',
-        right: '0',
+        right: '26px',
         transform: 'translateY(-50%) translateX(50%) rotate(-90deg)',
         transformOrigin: 'center',
         width: '14.8125rem',

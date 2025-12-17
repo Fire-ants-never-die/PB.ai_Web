@@ -5,7 +5,6 @@ import {
   flexRender,
   type ColumnDef,
 } from '@tanstack/react-table';
-import { ChevronDown } from 'lucide-react';
 import {
   Select,
   SelectContent,
@@ -14,10 +13,11 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
+import type { TableRow } from '@/lib/data/mock/tableData';
 
 export interface DynamicTableProps {
-  data: any[];
-  columns: ColumnDef<any>[];
+  data: TableRow[];
+  columns: ColumnDef<TableRow>[];
   className?: string;
   showDropdown?: boolean;
   dropdownOptions?: string[];
