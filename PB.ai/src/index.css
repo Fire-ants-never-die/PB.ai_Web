@@ -27,6 +27,8 @@
     --radius: 0.5rem;
     --success: 142 76% 36%;
     --danger: 0 84% 60%;
+    --safe: 226 100% 49%; /* #0042FB - typography/safe/500 */
+    --warning: 38 95% 48%; /* #F59E0B - color/warning/600 */
   }
 
   .dark {
