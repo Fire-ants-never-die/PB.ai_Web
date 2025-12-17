@@ -7,17 +7,22 @@ interface HealthCategory {
   status: HealthStatus;
 }
 
-export const FinancialHealth = () => {
-  // Mock data - 실제로는 백엔드에서 받아올 데이터
-  const healthCategories: HealthCategory[] = [
+interface FinancialHealthProps {
+  scoreValue?: number; // -1 ~ 1 사이의 값, 기본값: 0.855
+  healthCategories?: HealthCategory[];
+}
+
+export const FinancialHealth = ({
+  scoreValue = 0.855,
+  healthCategories = [
     { label: '유동성', status: '안전' },
     { label: '레버리지', status: '안전' },
     { label: '투자수익성', status: '안전' },
     { label: '판매마진', status: '안전' },
     { label: '활동성', status: '안전' },
     { label: '성장성', status: '안전' },
-  ];
-
+  ]
+}: FinancialHealthProps) => {
   // 상태별 색상 매핑
   const getStatusColor = (status: HealthStatus): string => {
     switch (status) {
@@ -32,7 +37,6 @@ export const FinancialHealth = () => {
     }
   };
 
-  const scoreValue = 0.855;
   const scorePosition = ((scoreValue + 1) / 2) * 100; // Convert -1~1 to 0~100%
 
   return (

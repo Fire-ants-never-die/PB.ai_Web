@@ -88,11 +88,12 @@ export const DynamicTable: React.FC<DynamicTableProps> = ({
         <table className="w-full border-collapse">
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id} className="border-b border-gray-300">
+              <tr key={headerGroup.id} className="bg-[#FCFCFD]" style={{ borderBottom: '1px solid #D7D9DB' }}>
                 {headerGroup.headers.map((header) => (
                   <th
                     key={header.id}
-                    className="px-4 py-3 text-left text-[15px] font-normal text-gray-700"
+                    className="px-4 py-3 text-left text-[0.8125rem] font-normal text-[#58595B] leading-[150%]"
+                    style={{ fontFamily: 'var(--typography-type, "Pretendard GOV")' }}
                   >
                     {header.isPlaceholder
                       ? null
@@ -109,12 +110,14 @@ export const DynamicTable: React.FC<DynamicTableProps> = ({
             {table.getRowModel().rows.map((row) => (
               <tr
                 key={row.id}
-                className="group border-b border-gray-200 transition-colors hover:border-gray-300"
+                className="group transition-colors hover:bg-[#F5F5F6]"
+                style={{ borderBottom: '1px solid #D7D9DB' }}
               >
                 {row.getVisibleCells().map((cell) => (
                   <td
                     key={cell.id}
-                    className="px-4 py-3 text-[17px] font-normal text-gray-700"
+                    className="px-4 py-3 text-[0.875rem] font-normal text-[#191B1C] leading-[150%]"
+                    style={{ fontFamily: 'var(--typography-type, "Pretendard GOV")' }}
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
