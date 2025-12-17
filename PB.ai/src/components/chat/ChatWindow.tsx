@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { X } from 'lucide-react';
 import { ChatChips, type Chip } from './ChatChips';
 import { tabSections } from '@/lib/data/static/tabSections';
@@ -38,6 +38,8 @@ export function ChatWindow({ activeTab, isOpen, onClose, companyName = '농심' 
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [sendHover, setSendHover] = useState(false);
+  const [renderQuestions, setRenderQuestions] = useState<{ id: string; text: string }[]>([]);
+  const hideQuestionsTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const idRef = useRef(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -60,6 +62,38 @@ export function ChatWindow({ activeTab, isOpen, onClose, companyName = '농심' 
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  const questionsForChip = useMemo(() => {
+    if (!selectedChip) return [];
+    return chatQuestions[activeTab]?.[selectedChip.label] ?? [];
+  }, [activeTab, selectedChip]);
+
+  const questionsVisible = showSectionQuestions && questionsForChip.length > 0 && !!selectedChip;
+
+  // 예상질문 렌더/언마운트 타이밍 관리 (나갈 때도 애니메이션 유지)
+  useEffect(() => {
+    if (hideQuestionsTimer.current) {
+      clearTimeout(hideQuestionsTimer.current);
+      hideQuestionsTimer.current = null;
+    }
+    if (questionsVisible) {
+      setRenderQuestions(questionsForChip);
+      return;
+    }
+    hideQuestionsTimer.current = setTimeout(() => setRenderQuestions([]), 220);
+    return () => {
+      if (hideQuestionsTimer.current) {
+        clearTimeout(hideQuestionsTimer.current);
+        hideQuestionsTimer.current = null;
+      }
+    };
+  }, [questionsVisible, questionsForChip]);
+
+  // 탭 변경 시 선택 상태 초기화
+  useEffect(() => {
+    setSelectedChip(null);
+    setShowSectionQuestions(false);
+  }, [activeTab]);
 
   // 메시지 전송
   const handleSend = async (question: string) => {
@@ -109,9 +143,15 @@ export function ChatWindow({ activeTab, isOpen, onClose, companyName = '농심' 
     }
   };
 
-  // Chip 클릭 처리
+  // Chip 클릭 처리 (토글)
   const handleChipClick = (chip: Chip) => {
     if (isLoading) return;
+    const isSameChip = selectedChip?.id === chip.id;
+    if (isSameChip) {
+      setSelectedChip(null);
+      setShowSectionQuestions(false);
+      return;
+    }
     setSelectedChip(chip);
     setShowSectionQuestions(true);
   };
@@ -220,7 +260,7 @@ export function ChatWindow({ activeTab, isOpen, onClose, companyName = '농심' 
                 fontWeight: 600,
               }}
             >
-              {companyName} {currentTabLabel}에 최적화되어 있어요. 궁금하신 점 모두 물어보세요
+              {companyName} {currentTabLabel}에 최적화되어 있어요. 궁금하신 점 모두 물어보세요!
             </h3>
           </div>
 
@@ -292,35 +332,49 @@ export function ChatWindow({ activeTab, isOpen, onClose, companyName = '농심' 
           )}
 
           {/* 구분선 + 칩/예상질문 영역 */}
-          {(sectionChips.length > 0 || (showSectionQuestions && selectedChip)) && (
+          {(sectionChips.length > 0 || renderQuestions.length > 0) && (
             <div className="w-full relative z-10 no-drag" style={{ marginTop: '0.75rem', paddingTop: '0.75rem', borderTop: '1px solid #E7E9EB' }}>
               {sectionChips.length > 0 && (
                 <div className="w-full" style={{ marginBottom: '0.5rem' }}>
-                  <ChatChips chips={sectionChips} onChipClick={handleChipClick} />
+                  <ChatChips
+                    chips={sectionChips}
+                    onChipClick={handleChipClick}
+                    selectedChipId={selectedChip?.id ?? null}
+                  />
                 </div>
               )}
-              {showSectionQuestions && selectedChip && (
-                <div className="w-full space-y-2">
-                  {chatQuestions[activeTab]?.[selectedChip.label]?.map((question) => (
+              <div
+                className={cn(
+                  "w-full space-y-2 overflow-hidden",
+                  "transition-[max-height,opacity,transform] duration-200 ease-in-out",
+                  questionsVisible
+                    ? "opacity-100 translate-y-0 max-h-96"
+                    : "opacity-0 -translate-y-2 max-h-0 pointer-events-none"
+                )}
+                aria-hidden={!questionsVisible}
+              >
+                {renderQuestions.map((question, index) => (
                     <button
                       key={question.id}
                       onClick={() => handleSend(question.text)}
                       className={cn(
                         "w-full text-left px-4 py-3 rounded-lg",
-                        "bg-white hover:bg-[#F5F5F5]",
-                        "transition-colors duration-150",
-                        "text-[#000] text-[0.9375rem] leading-[150%] font-normal"
+                        "bg-white hover:bg-[#F0F4FF]",
+                        "transition-all duration-150",
+                        "text-[#000] text-[0.9375rem] leading-[150%] font-normal",
+                        "shadow-sm hover:shadow-md",
+                        "transform hover:-translate-y-0.5"
                       )}
                       style={{
                         fontFamily: 'var(--typography-type, "Pretendard GOV")',
                         border: 'none',
+                        transitionDelay: `${index * 20}ms`,
                       }}
                     >
                       {question.text}
                     </button>
                   ))}
-                </div>
-              )}
+              </div>
             </div>
           )}
 

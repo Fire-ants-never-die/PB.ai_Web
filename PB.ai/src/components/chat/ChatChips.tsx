@@ -9,9 +9,10 @@ interface ChatChipsProps {
   chips: Chip[];
   onChipClick: (chip: Chip) => void;
   className?: string;
+  selectedChipId?: string | null;
 }
 
-export function ChatChips({ chips, onChipClick, className }: ChatChipsProps) {
+export function ChatChips({ chips, onChipClick, className, selectedChipId }: ChatChipsProps) {
   if (chips.length === 0) return null;
 
   return (
@@ -21,12 +22,13 @@ export function ChatChips({ chips, onChipClick, className }: ChatChipsProps) {
           key={chip.id}
           onClick={() => onChipClick(chip)}
           onMouseDown={(e) => e.stopPropagation()}
+          aria-pressed={selectedChipId === chip.id}
           className={cn(
-            "px-4 py-2 rounded-full",
-            "bg-[#F5F5F5] hover:bg-[#E5E5E5]",
-            "text-sm text-[#191B1C]",
-            "transition-colors duration-200",
-            "cursor-pointer"
+            "px-4 py-2 rounded-full border border-transparent",
+            "text-sm transition-colors duration-200 cursor-pointer",
+            selectedChipId === chip.id
+              ? "bg-[#5797F7] text-white hover:bg-[#3F7EE0]"
+              : "bg-[#F5F5F5] text-[#191B1C] hover:bg-[#E5E5E5]"
           )}
         >
           {chip.label}
