@@ -13,6 +13,10 @@ interface SidebarProps {
 export function Sidebar({ isCollapsed, onToggle, className }: SidebarProps) {
   const navigate = useNavigate();
 
+  const handleLogoClick = () => {
+    navigate('/');
+  };
+
   const mainNavItems = [
     {
       title: SIDEBAR_MENU.newReport,
@@ -61,7 +65,12 @@ export function Sidebar({ isCollapsed, onToggle, className }: SidebarProps) {
       <div className="flex h-16 items-center relative border-b border-gray-200" style={{ top: '1.25rem' }}>
         {!isCollapsed && (
           <div className="flex items-center justify-between w-full px-4">
-            <img src="/pb_logo.svg" alt="PB.ai Logo" className="h-8 w-8" />
+            <img
+              src="/pb_logo.svg"
+              alt="PB.ai Logo"
+              className="h-8 w-8 cursor-pointer hover:opacity-80 transition-opacity"
+              onClick={handleLogoClick}
+            />
             <img
               src="/Sidebar.svg"
               alt="Sidebar Toggle"
@@ -72,11 +81,17 @@ export function Sidebar({ isCollapsed, onToggle, className }: SidebarProps) {
           </div>
         )}
         {isCollapsed && (
-          <div className="flex items-center justify-center w-full">
+          <div className="flex items-center justify-center w-full gap-3">
             <img
               src="/pb_logo.svg"
               alt="PB.ai Logo"
-              className="h-8 w-8 cursor-pointer hover:opacity-70 transition-opacity"
+              className="h-8 w-8 cursor-pointer hover:opacity-80 transition-opacity"
+              onClick={handleLogoClick}
+            />
+            <img
+              src="/Sidebar.svg"
+              alt="Sidebar Toggle"
+              className="h-5 w-5 cursor-pointer hover:opacity-70 transition-opacity"
               onClick={onToggle}
             />
           </div>
