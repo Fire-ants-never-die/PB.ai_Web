@@ -210,7 +210,7 @@ export function FinancialAnalysisTab({
         <FinancialHealth hideTitle={true} />
 
         {/* 재무 비율 판정 표 */}
-        <div className="mt-6">
+        <div className="mt-0">
           <FinancialRatioJudgmentTable data={financialRatioJudgmentData} />
         </div>
       </div>
