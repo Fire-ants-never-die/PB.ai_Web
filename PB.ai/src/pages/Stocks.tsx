@@ -4,6 +4,7 @@ import { PageLayout } from '@/components/layout/PageLayout';
 import { useStockData, mockStocks, generatePriceHistory } from '@/utils/stocksApi';
 import { StockCard } from '@/components/stocks/StockCard';
 import { StockChart } from '@/components/stocks/StockChart';
+import { FinancialTableExample } from '@/components/stocks/FinancialTableExample';
 
 const Stocks = () => {
   const stocks = useStockData(mockStocks);
@@ -43,6 +44,11 @@ const Stocks = () => {
               volatility={2.5} />
           </div>
         </div>
+      </div>
+
+      {/* Financial Table Section */}
+      <div className="mt-8">
+        <FinancialTableExample />
       </div>
 
       {/* Fixed stock info cards at bottom right - horizontal layout */}
