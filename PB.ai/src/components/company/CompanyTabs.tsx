@@ -1,5 +1,3 @@
-import { useState } from 'react';
-
 interface CompanyTabsProps {
   activeTab: string;
   onTabChange: (tab: string) => void;

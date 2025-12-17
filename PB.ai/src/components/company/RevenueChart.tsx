@@ -22,6 +22,12 @@ interface RevenueChartProps {
   data: Record<string, number>; // { "2024": 1500000000000, "2023": 2800000000000 }
 }
 
+type TooltipWithCoords = TooltipProps<number, string> & {
+  coordinate?: { x: number; y: number };
+  viewBox?: { x: number; y: number; height: number };
+  payload?: Array<{ value?: number; payload?: RevenueData }>;
+};
+
 // 숫자를 조 단위로 포맷팅
 const formatToTrillion = (value: number): string => {
   const trillion = value / 1000000000000;
@@ -74,9 +80,12 @@ export const RevenueChart = ({ data }: RevenueChartProps) => {
   const yAxisDomain: [number, number] = [0, yAxisTicks[yAxisTicks.length - 1] || 1];
 
   // 커스텀 툴팁 - 각 막대 높이 중간에 고정
-  const CustomTooltip = ({ active, payload, coordinate, viewBox }: TooltipProps<number, string>) => {
+  const CustomTooltip = (props: TooltipWithCoords) => {
+    const { coordinate, viewBox } = props;
+    const payload = props.payload as TooltipWithCoords['payload'];
+
     if (
-      active &&
+      props.active &&
       payload &&
       payload.length &&
       coordinate &&
@@ -102,7 +111,7 @@ export const RevenueChart = ({ data }: RevenueChartProps) => {
         >
           <div className="flex flex-col gap-2">
             <p className="text-[14px] font-semibold text-[#191B1C] leading-[1.5]">
-              {payload[0].payload.year}
+            {payload[0].payload?.year}
             </p>
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-[2px] bg-graph_yellow"></div>
@@ -165,7 +174,7 @@ export const RevenueChart = ({ data }: RevenueChartProps) => {
             onMouseEnter={(_, index) => setHoveredIndex(index)}
             onMouseLeave={() => setHoveredIndex(null)}
           >
-            {chartData.map((entry, index) => (
+            {chartData.map((_, index) => (
               <Cell
                 key={`cell-${index}`}
                 fill={hoveredIndex === index ? '#EAAB3C' : '#F5CC84'}
@@ -209,9 +218,12 @@ export const RevenueComboChart = ({ data }: RevenueChartProps) => {
   const yAxisTicks = maxRevenue ? calculateYAxisTicks(maxRevenue) : [0, 0.5 * 1_000_000_000_000];
   const yAxisDomain: [number, number] = [0, yAxisTicks[yAxisTicks.length - 1] || 1];
 
-  const CustomTooltip = ({ active, payload, coordinate, viewBox }: TooltipProps<number, string>) => {
+  const CustomTooltip = (props: TooltipWithCoords) => {
+    const payload = props.payload;
+    const { coordinate, viewBox } = props;
+
     if (
-      active &&
+      props.active &&
       payload &&
       payload.length &&
       coordinate &&
@@ -237,7 +249,7 @@ export const RevenueComboChart = ({ data }: RevenueChartProps) => {
         >
           <div className="flex flex-col gap-2">
             <p className="text-[14px] font-semibold text-[#191B1C] leading-[1.5]">
-              {payload[0].payload.year}
+              {payload[0].payload?.year}
             </p>
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-[2px] bg-graph_yellow"></div>
@@ -331,7 +343,7 @@ export const RevenueComboChart = ({ data }: RevenueChartProps) => {
       </ResponsiveContainer>
 
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10">
-        <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded">
+          <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded">
           <div className="w-3 h-3 rounded-[2px] bg-graph_yellow"></div>
           <span className="text-[13px] text-[#6B7280]">매출액</span>
         </div>

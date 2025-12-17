@@ -77,7 +77,7 @@ export function ChatWindow({ activeTab, isOpen, onClose, companyName = '농심' 
     setIsLoading(true);
 
     try {
-      const res = await fetch(`${API_BASE_URL}/prevqna/company`, {
+      const res = await fetch(`${API_BASE_URL}/ask`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

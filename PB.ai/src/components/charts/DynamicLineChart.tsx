@@ -32,15 +32,25 @@ export interface DynamicLineChartProps {
 }
 
 // 커스텀 툴팁
-const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
-  if (active && payload && payload.length) {
+type CustomTooltipProps = TooltipProps<number, string> & {
+  payload?: Array<{
+    color?: string;
+    name?: string;
+    value?: number | string;
+  }>;
+  label?: string | number;
+};
+
+const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
+  const items = payload as CustomTooltipProps['payload'];
+  if (active && items && items.length) {
     return (
       <div className="bg-white rounded-[8px] shadow-[0px_4px_16px_0px_rgba(0,0,0,0.12)] p-4 min-w-[160px]">
         <p className="text-[14px] font-semibold text-[#191B1C] leading-[1.5] mb-3">
           {label}
         </p>
         <div className="flex flex-col gap-2">
-          {payload.map((entry, index) => (
+          {items.map((entry, index: number) => (
             <div key={index} className="flex items-center gap-2">
               <div
                 className="w-3 h-3 rounded-[2px]"

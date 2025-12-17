@@ -1,5 +1,3 @@
-import type React from 'react';
-
 // 재무 데이터 타입
 export interface FinancialDataPoint {
   year: string;
@@ -262,4 +260,3 @@ export const fieldLabels = {
   operatingIncome: '영업이익',
   netIncome: '순이익',
 };
-

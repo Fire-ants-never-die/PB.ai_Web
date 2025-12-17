@@ -1,10 +1,12 @@
 
 import { PageLayout } from '@/components/layout/PageLayout';
 import { DynamicLineChart, type LineConfig } from '@/components/charts/DynamicLineChart';
-import type { ChartDataPoint } from '@/components/charts/DynamicLineChart';
 
 // 하드코딩 데이터 - 2개 라인 (이 데이터를 수정해서 테스트하세요!)
-const performanceData: ChartDataPoint[] = [
+type PerfPoint = { date: string; portfolio: number; market: number };
+type ThreeLinePoint = { date: string; line1: number; line2: number; line3: number };
+
+const performanceData: PerfPoint[] = [
   { date: 'Jan 1', portfolio: 10000, market: 10000 },
   { date: 'Jan 2', portfolio: 10200, market: 10100 },
   { date: 'Jan 3', portfolio: 10400, market: 10050 },
@@ -23,7 +25,7 @@ const performanceData: ChartDataPoint[] = [
 ];
 
 // 하드코딩 데이터 - 3개 라인 (이 데이터를 수정해서 테스트하세요!)
-const threeLineData: ChartDataPoint[] = [
+const threeLineData: ThreeLinePoint[] = [
   { date: 'Jan 1', line1: 10000, line2: 10000, line3: 10000 },
   { date: 'Jan 2', line1: 10200, line2: 10100, line3: 10150 },
   { date: 'Jan 3', line1: 10400, line2: 10050, line3: 10300 },
@@ -54,18 +56,17 @@ const threeLinesConfig: LineConfig[] = [
   { dataKey: 'line3', name: 'Portfolio C', color: '#3B82F6' }, // blue-500
 ];
 
-const monthlyReturns = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'].map(
-  (month) => ({
+const monthlyReturns: Array<{ month: string; value: number }> =
+  ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'].map((month) => ({
     month,
     value: (Math.random() * 6) - 2,
-  })
-);
+  }));
 
 const Performance = () => {
 
   // Calculate performance metrics
-  const initialPortfolio = performanceData[0].portfolio;
-  const currentPortfolio = performanceData[performanceData.length - 1].portfolio;
+  const initialPortfolio = Number(performanceData[0].portfolio);
+  const currentPortfolio = Number(performanceData[performanceData.length - 1].portfolio);
   const totalReturn = ((currentPortfolio - initialPortfolio) / initialPortfolio) * 100;
 
   // Mock sector allocation data
