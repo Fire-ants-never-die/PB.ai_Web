@@ -1,76 +1,45 @@
 
 import { PageLayout } from '@/components/layout/PageLayout';
-import { DynamicLineChart, type LineConfig, type ChartDataPoint } from '@/components/charts/DynamicLineChart';
+import { DynamicLineChart, type LineConfig } from '@/components/charts/DynamicLineChart';
+import type { ChartDataPoint } from '@/components/charts/DynamicLineChart';
 
-// Generate mock performance data - 2개 라인
-const generatePerformanceData = () => {
-  const baseValue = 10000;
-  const volatility = 1.5;
-  const days = 30;
-  const portfolioValues = [baseValue];
-  const marketValues = [baseValue];
+// 하드코딩 데이터 - 2개 라인 (이 데이터를 수정해서 테스트하세요!)
+const performanceData: ChartDataPoint[] = [
+  { date: 'Jan 1', portfolio: 10000, market: 10000 },
+  { date: 'Jan 2', portfolio: 10200, market: 10100 },
+  { date: 'Jan 3', portfolio: 10400, market: 10050 },
+  { date: 'Jan 4', portfolio: 10300, market: 10200 },
+  { date: 'Jan 5', portfolio: 10500, market: 10150 },
+  { date: 'Jan 6', portfolio: 10600, market: 10300 },
+  { date: 'Jan 7', portfolio: 10550, market: 10250 },
+  { date: 'Jan 8', portfolio: 10700, market: 10400 },
+  { date: 'Jan 9', portfolio: 10800, market: 10350 },
+  { date: 'Jan 10', portfolio: 10750, market: 10500 },
+  { date: 'Jan 11', portfolio: 10900, market: 10450 },
+  { date: 'Jan 12', portfolio: 11000, market: 10600 },
+  { date: 'Jan 13', portfolio: 10950, market: 10550 },
+  { date: 'Jan 14', portfolio: 11100, market: 10700 },
+  { date: 'Jan 15', portfolio: 11200, market: 10650 },
+];
 
-  const dates = Array.from({ length: days }, (_, i) => {
-    const date = new Date();
-    date.setDate(date.getDate() - (days - i - 1));
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-  });
-
-  for (let i = 1; i < days; i++) {
-    const portfolioChange = (Math.random() - 0.45) * volatility;
-    const marketChange = (Math.random() - 0.5) * (volatility * 0.8);
-
-    portfolioValues.push(
-      parseFloat((portfolioValues[i-1] * (1 + portfolioChange / 100)).toFixed(2))
-    );
-
-    marketValues.push(
-      parseFloat((marketValues[i-1] * (1 + marketChange / 100)).toFixed(2))
-    );
-  }
-
-  return dates.map((date, i) => ({
-    date,
-    portfolio: portfolioValues[i],
-    market: marketValues[i]
-  }));
-};
-
-// Generate mock performance data - 3개 라인
-const generateThreeLineData = () => {
-  const baseValue = 10000;
-  const volatility = 1.5;
-  const days = 30;
-  const values1 = [baseValue];
-  const values2 = [baseValue];
-  const values3 = [baseValue];
-
-  const dates = Array.from({ length: days }, (_, i) => {
-    const date = new Date();
-    date.setDate(date.getDate() - (days - i - 1));
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-  });
-
-  for (let i = 1; i < days; i++) {
-    const change1 = (Math.random() - 0.45) * volatility;
-    const change2 = (Math.random() - 0.5) * (volatility * 0.8);
-    const change3 = (Math.random() - 0.48) * (volatility * 0.9);
-
-    values1.push(parseFloat((values1[i-1] * (1 + change1 / 100)).toFixed(2)));
-    values2.push(parseFloat((values2[i-1] * (1 + change2 / 100)).toFixed(2)));
-    values3.push(parseFloat((values3[i-1] * (1 + change3 / 100)).toFixed(2)));
-  }
-
-  return dates.map((date, i) => ({
-    date,
-    line1: values1[i],
-    line2: values2[i],
-    line3: values3[i]
-  }));
-};
-
-const performanceData = generatePerformanceData();
-const threeLineData = generateThreeLineData();
+// 하드코딩 데이터 - 3개 라인 (이 데이터를 수정해서 테스트하세요!)
+const threeLineData: ChartDataPoint[] = [
+  { date: 'Jan 1', line1: 10000, line2: 10000, line3: 10000 },
+  { date: 'Jan 2', line1: 10200, line2: 10100, line3: 10150 },
+  { date: 'Jan 3', line1: 10400, line2: 10050, line3: 10300 },
+  { date: 'Jan 4', line1: 10300, line2: 10200, line3: 10250 },
+  { date: 'Jan 5', line1: 10500, line2: 10150, line3: 10400 },
+  { date: 'Jan 6', line1: 10600, line2: 10300, line3: 10500 },
+  { date: 'Jan 7', line1: 10550, line2: 10250, line3: 10450 },
+  { date: 'Jan 8', line1: 10700, line2: 10400, line3: 10600 },
+  { date: 'Jan 9', line1: 10800, line2: 10350, line3: 10700 },
+  { date: 'Jan 10', line1: 10750, line2: 10500, line3: 10650 },
+  { date: 'Jan 11', line1: 10900, line2: 10450, line3: 10800 },
+  { date: 'Jan 12', line1: 11000, line2: 10600, line3: 10900 },
+  { date: 'Jan 13', line1: 10950, line2: 10550, line3: 10850 },
+  { date: 'Jan 14', line1: 11100, line2: 10700, line3: 11000 },
+  { date: 'Jan 15', line1: 11200, line2: 10650, line3: 11100 },
+];
 
 // 2개 라인 설정
 const twoLinesConfig: LineConfig[] = [
