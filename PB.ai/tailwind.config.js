@@ -48,6 +48,10 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        safe: "hsl(var(--safe))",
+        warning: "hsl(var(--warning))",
+        graph_yellow: "#F5CC84",
+        graph_Yellow: "#EAAB3C",
       },
       borderRadius: {
         lg: "var(--radius)",

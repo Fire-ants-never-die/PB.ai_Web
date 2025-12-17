@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
-import { Navbar } from '@/components/layout/Navbar';
 import { Sidebar } from '@/components/layout/Sidebar';
+import { FloatingActionButton } from '@/components/layout/FloatingActionButton';
 import { cn } from '@/lib/utils';
 
 interface PageLayoutProps {
@@ -18,13 +18,11 @@ export function PageLayout({ children, title }: PageLayoutProps) {
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
-      <Navbar />
-
       <div className="flex-1 relative">
         <Sidebar isCollapsed={isSidebarCollapsed} onToggle={toggleSidebar} />
 
         <main className={cn(
-          "transition-all duration-300 min-h-screen pt-16",
+          "transition-all duration-300 min-h-screen pt-6",
           isSidebarCollapsed ? "ml-20" : "ml-72"
         )}>
           <div className="container max-w-full p-4 lg:p-6 animate-fade-in">
@@ -32,6 +30,9 @@ export function PageLayout({ children, title }: PageLayoutProps) {
             {children}
           </div>
         </main>
+
+        {/* Floating Action Button */}
+        <FloatingActionButton />
       </div>
     </div>);
 
