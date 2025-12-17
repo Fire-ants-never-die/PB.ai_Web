@@ -104,7 +104,7 @@ const CompanyOverview = () => {
     switch (activeTab) {
       case 'overview':
         return (
-          <div className="flex flex-col gap-12 py-8">
+          <div className="flex flex-col gap-12">
             <CompanyProfile />
             <SalesComposition />
 
