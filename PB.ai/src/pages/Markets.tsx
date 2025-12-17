@@ -1,5 +1,4 @@
 
-import React from 'react';
 import { PageLayout } from '@/components/layout/PageLayout';
 import { MarketOverview } from '@/components/markets/MarketOverview';
 import { useMarketIndices, mockIndices } from '@/utils/stocksApi';

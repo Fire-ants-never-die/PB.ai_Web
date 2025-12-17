@@ -29,6 +29,8 @@
     --danger: 0 84% 60%;
     --safe: 226 100% 49%; /* #0042FB - typography/safe/500 */
     --warning: 38 95% 48%; /* #F59E0B - color/warning/600 */
+    --graph-yellow: 45 93% 58%;
+    --graph-yellow-hover: 45 93% 68%;
   }
 
   .dark {
@@ -51,6 +53,8 @@
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9%;
+    --graph-yellow: 45 93% 58%;
+    --graph-yellow-hover: 45 93% 68%;
   }
 }
 
