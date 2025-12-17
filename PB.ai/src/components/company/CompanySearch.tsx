@@ -11,11 +11,19 @@ interface Company {
 
 const companies: Company[] = [
   { id: '004370', name: '농심' },
-  { id: '001450', name: '삼양사' },
+  { id: '001450', name: '삼양식품' },
   { id: '005610', name: 'SPC삼립' },
   { id: '007310', name: '오뚜기' },
   { id: '097950', name: 'CJ제일제당' },
 ];
+
+const companyLogos: Record<string, string> = {
+  '004370': '/nongshim_logo.svg',
+  '001450': '/samyang_logo.png',
+  '005610': '/sampl_logo.png',
+  '007310': '/o_logo.png',
+  '097950': '/cj_logo.png',
+};
 
 interface CompanySearchProps {
   className?: string;
@@ -119,7 +127,7 @@ export function CompanySearch({ className }: CompanySearchProps) {
               {/* 로고 */}
               <div className="flex-shrink-0 w-5 h-5 flex items-center justify-center rounded overflow-hidden">
                 <img
-                  src="/nongshim_logo.svg"
+                  src={companyLogos[company.id] ?? '/pb_logo.svg'}
                   alt={`${company.name} 로고`}
                   className="w-full h-full object-contain"
                 />

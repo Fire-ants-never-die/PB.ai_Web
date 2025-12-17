@@ -30,6 +30,13 @@ const CompanyOverview = () => {
     }
   }, [companyCode, navigate]);
 
+  useEffect(() => {
+    if (activeTab === 'financial') {
+      // 탭 전환 시 항상 페이지 상단으로 이동하여 첫 섹션을 바로 노출
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [activeTab]);
+
   // API 호출 (실제로는 백엔드에서 재무제표 데이터를 받아옴)
   // TODO: 받은 데이터를 실제로 사용하도록 구현 필요
   // const { data: financialStatements } = useFinancialStatements(companyCode || '', 'annual');
