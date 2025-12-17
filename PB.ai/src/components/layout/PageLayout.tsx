@@ -1,7 +1,6 @@
 
 import React, { useState } from 'react';
 import { Sidebar } from '@/components/layout/Sidebar';
-import { FloatingActionButton } from '@/components/layout/FloatingActionButton';
 import { cn } from '@/lib/utils';
 
 interface PageLayoutProps {
@@ -30,9 +29,6 @@ export function PageLayout({ children, title }: PageLayoutProps) {
             {children}
           </div>
         </main>
-
-        {/* Floating Action Button */}
-        <FloatingActionButton />
       </div>
     </div>);
 

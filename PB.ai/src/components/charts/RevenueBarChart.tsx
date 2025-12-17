@@ -106,6 +106,14 @@ export function RevenueBarChart({ data, className }: RevenueBarChartProps) {
 
   return (
     <div className={className}>
+      <style>{`
+        .recharts-surface:focus {
+          outline: none !important;
+        }
+        .recharts-wrapper:focus {
+          outline: none !important;
+        }
+      `}</style>
       <ResponsiveContainer width="100%" height="100%">
         <BarChart
           data={chartData}

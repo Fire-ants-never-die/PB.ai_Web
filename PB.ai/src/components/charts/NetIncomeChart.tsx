@@ -44,10 +44,14 @@ function CustomTooltip({ active, payload }: any) {
 
   return (
     <div
-      className="flex flex-col gap-1 items-start justify-center px-2 py-2 rounded-lg border border-[rgba(231,233,235,0.5)] shadow-[0px_2px_4px_0px_rgba(107,109,111,0.4)]"
+      className="flex flex-col gap-1 items-start justify-center px-2 py-2"
       style={{
-        backgroundColor: 'rgba(255,255,255,0.5)',
-        backdropFilter: 'blur(8px)',
+        borderRadius: '0.5rem',
+        border: '1px solid rgba(0, 0, 0, 0.50)',
+        backgroundColor: 'rgba(255, 255, 255, 0.50)',
+        boxShadow: '0 2px 4px 0 rgba(107, 109, 111, 0.40)',
+        backdropFilter: 'blur(4px)',
+        WebkitBackdropFilter: 'blur(4px)',
       }}
     >
       <p
@@ -158,7 +162,26 @@ export function NetIncomeChart({ data, className }: NetIncomeChartProps) {
 
   return (
     <div className={className}>
-      <ResponsiveContainer width="100%" height="100%">
+      <style>{`
+        .recharts-surface,
+        .recharts-surface *,
+        .recharts-wrapper,
+        .recharts-wrapper * {
+          outline: none !important;
+          border: none !important;
+          box-shadow: none !important;
+        }
+        .recharts-surface:focus,
+        .recharts-surface *:focus,
+        .recharts-surface path:focus,
+        .recharts-surface g:focus,
+        .recharts-rectangle:focus {
+          outline: none !important;
+          border: none !important;
+          box-shadow: none !important;
+        }
+      `}</style>
+      <ResponsiveContainer width="100%" height="100%" minHeight={200}>
         <ComposedChart
           data={chartData}
           margin={{ top: 7.33, right: 9.773, left: 1.222, bottom: 7.33 }}

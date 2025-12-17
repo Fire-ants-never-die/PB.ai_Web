@@ -94,6 +94,14 @@ export const DynamicLineChart = ({
 }: DynamicLineChartProps) => {
   return (
     <div className={cn('w-full', className)}>
+      <style>{`
+        .recharts-surface:focus {
+          outline: none !important;
+        }
+        .recharts-wrapper:focus {
+          outline: none !important;
+        }
+      `}</style>
       <ResponsiveContainer width="100%" height={height}>
         <LineChart
           data={data}

@@ -257,6 +257,14 @@ export const RevenueComboChart = ({ data }: RevenueChartProps) => {
 
   return (
     <div className="w-full h-[450px] bg-white rounded-lg p-6 relative">
+      <style>{`
+        .recharts-surface:focus {
+          outline: none !important;
+        }
+        .recharts-wrapper:focus {
+          outline: none !important;
+        }
+      `}</style>
       <ResponsiveContainer width="100%" height="100%">
         <ComposedChart
           data={chartData}

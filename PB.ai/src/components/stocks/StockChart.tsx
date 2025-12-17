@@ -100,6 +100,14 @@ export function StockChart({
       </CardHeader>
       <CardContent className="p-0 pb-4">
         <div className="h-[300px] w-full px-4">
+          <style>{`
+            .recharts-surface:focus {
+              outline: none !important;
+            }
+            .recharts-wrapper:focus {
+              outline: none !important;
+            }
+          `}</style>
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart
               data={chartData}

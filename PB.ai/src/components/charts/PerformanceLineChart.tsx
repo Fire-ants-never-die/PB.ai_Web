@@ -79,6 +79,14 @@ export const PerformanceLineChart = ({
 
   return (
     <div className={cn('w-full', className)}>
+      <style>{`
+        .recharts-surface:focus {
+          outline: none !important;
+        }
+        .recharts-wrapper:focus {
+          outline: none !important;
+        }
+      `}</style>
       <ResponsiveContainer width="100%" height="100%">
         <LineChart
           data={data}

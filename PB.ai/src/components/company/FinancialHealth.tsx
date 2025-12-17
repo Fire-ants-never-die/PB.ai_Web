@@ -10,6 +10,8 @@ interface HealthCategory {
 interface FinancialHealthProps {
   scoreValue?: number; // -1 ~ 1 사이의 값, 기본값: 0.855
   healthCategories?: HealthCategory[];
+  hideTitle?: boolean; // 제목 숨김 여부
+  onDetailClick?: () => void; // 상세보기 버튼 클릭 핸들러
 }
 
 export const FinancialHealth = ({
@@ -21,7 +23,9 @@ export const FinancialHealth = ({
     { label: '판매마진', status: '안전' },
     { label: '활동성', status: '안전' },
     { label: '성장성', status: '안전' },
-  ]
+  ],
+  hideTitle = false,
+  onDetailClick,
 }: FinancialHealthProps) => {
   // 상태별 색상 매핑
   const getStatusColor = (status: HealthStatus): string => {
@@ -40,16 +44,28 @@ export const FinancialHealth = ({
   const scorePosition = ((scoreValue + 1) / 2) * 100; // Convert -1~1 to 0~100%
 
   return (
-    <div className="flex flex-col gap-8">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-semibold text-[#191B1C] transition-colors hover:text-[#5797F7] cursor-default">
-          4. 재무건전성
-        </h2>
-        <button className="flex items-center gap-2 text-[12px] text-[#4D76D4] hover:underline">
-          <Check className="w-4 h-4" />
-          재무 건정성 상세하게 알아보기
-        </button>
-      </div>
+    <div
+      className="flex flex-col gap-8 rounded-2xl bg-white"
+      style={{
+        backdropFilter: 'blur(4px)',
+        padding: '2rem',
+        minHeight: '28rem',
+      }}
+    >
+      {!hideTitle && (
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-semibold text-[#191B1C] transition-colors hover:text-[#5797F7] cursor-default">
+            4. 재무건전성
+          </h2>
+          <button
+            onClick={onDetailClick}
+            className="flex items-center gap-2 text-[12px] text-[#4D76D4] hover:underline"
+          >
+            <Check className="w-4 h-4" />
+            재무 건정성 상세하게 알아보기
+          </button>
+        </div>
+      )}
 
       {/* Dynamic description - mock data */}
       <p className="text-[17px] text-[#191B1C] leading-[1.5] font-normal">

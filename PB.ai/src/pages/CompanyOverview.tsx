@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { PageLayout } from '@/components/layout/PageLayout';
 import { CompanyTabs } from '@/components/company/CompanyTabs';
 import { CompanyProfile } from '@/components/company/CompanyProfile';
@@ -9,9 +10,30 @@ import { RevenueChart } from '@/components/charts/RevenueChart';
 import { NetIncomeChart } from '@/components/charts/NetIncomeChart';
 import { FinancialDataTable } from '@/components/company/FinancialDataTable';
 import type { FinancialYearData } from '@/components/company/FinancialDataTable';
+import { FinancialAnalysisTab } from '@/components/financial-analysis/FinancialAnalysisTab';
+import { ChatWindow } from '@/components/chat/ChatWindow';
+import { FloatingActionButton } from '@/components/layout/FloatingActionButton';
 
 const CompanyOverview = () => {
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('overview');
+  const [isChatOpen, setIsChatOpen] = useState(false);
+
+  const companyCode = searchParams.get('code');
+  const companyName = searchParams.get('name') || '농심'; // 기본값은 농심
+
+  // 회사 코드가 없으면 메인 페이지로 리다이렉트
+  useEffect(() => {
+    if (!companyCode) {
+      navigate('/');
+    }
+  }, [companyCode, navigate]);
+
+  // API 호출 (실제로는 백엔드에서 재무제표 데이터를 받아옴)
+  // TODO: 받은 데이터를 실제로 사용하도록 구현 필요
+  // const { data: financialStatements } = useFinancialStatements(companyCode || '', 'annual');
+  // const { data: balanceSheets } = useBalanceSheets(companyCode || '', 'annual');
 
   // Mock 데이터 - 실제로는 API에서 받아올 데이터
   const revenueData = [
@@ -93,14 +115,16 @@ const CompanyOverview = () => {
               </h2>
 
               {/* 차트 두 개 나란히 배치 */}
-              <div className="flex items-start gap-3">
+              <div className="flex items-start gap-3 min-w-0">
                 {/* 왼쪽: 매출액 차트 */}
                 <div
                   className="flex justify-between items-start"
                   style={{
                     width: '24.06419rem',
                     height: '22.51825rem',
-                    padding: '0.45813rem 0.61081rem 0.45813rem 0.07638rem'
+                    padding: '0.45813rem 0.61081rem 0.45813rem 0.07638rem',
+                    minWidth: 0,
+                    minHeight: '200px',
                   }}
                 >
                   <RevenueChart
@@ -115,7 +139,9 @@ const CompanyOverview = () => {
                   style={{
                     width: '24.06419rem',
                     height: '22.51825rem',
-                    padding: '0.45813rem 0.61081rem 0.45813rem 0.07638rem'
+                    padding: '0.45813rem 0.61081rem 0.45813rem 0.07638rem',
+                    minWidth: 0,
+                    minHeight: '200px',
                   }}
                 >
                   <NetIncomeChart
@@ -131,15 +157,17 @@ const CompanyOverview = () => {
               </div>
             </div>
 
-            <FinancialHealth />
+            <FinancialHealth onDetailClick={() => setActiveTab('financial')} />
             <IndustryDescription />
           </div>
         );
       case 'financial':
         return (
-          <div className="flex items-center justify-center h-96">
-            <p className="text-lg text-gray-500">재무현황분석 탭 내용 (준비 중)</p>
-          </div>
+          <FinancialAnalysisTab
+            revenueData={revenueData}
+            netIncomeData={netIncomeData}
+            financialTableData={financialTableData}
+          />
         );
       case 'investment':
         return (
@@ -164,14 +192,39 @@ const CompanyOverview = () => {
     }
   };
 
+  // 회사 코드가 없으면 아무것도 렌더링하지 않음
+  if (!companyCode) {
+    return null;
+  }
+
   return (
-    <PageLayout title="농심">
+    <PageLayout title="">
       <div className="max-w-[920px] mx-auto">
+        {/* 로고 이미지 - CompanyTabs 바로 위에 왼쪽 정렬 */}
+        <div className="mb-6">
+          <img
+            src="/nongshim_title.png"
+            alt="로고"
+            className="h-auto"
+            style={{ maxHeight: '60px' }}
+          />
+        </div>
         <CompanyTabs activeTab={activeTab} onTabChange={setActiveTab} />
         <div className="mt-8">
           {renderTabContent()}
         </div>
       </div>
+
+      {/* Chat Window */}
+      <ChatWindow
+        activeTab={activeTab}
+        isOpen={isChatOpen}
+        onClose={() => setIsChatOpen(false)}
+        companyName={companyName}
+      />
+
+      {/* Floating Chat Button */}
+      <FloatingActionButton onClick={() => setIsChatOpen(true)} />
     </PageLayout>
   );
 };

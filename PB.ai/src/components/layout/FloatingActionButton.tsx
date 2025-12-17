@@ -3,12 +3,16 @@ import { Plus } from 'lucide-react';
 
 interface FloatingActionButtonProps {
   className?: string;
+  onClick?: () => void;
 }
 
-export function FloatingActionButton({ className }: FloatingActionButtonProps) {
+export function FloatingActionButton({ className, onClick }: FloatingActionButtonProps) {
   const handleClick = () => {
-    console.log('New chat button clicked');
-    // TODO: 버튼 클릭 시 동작 구현
+    if (onClick) {
+      onClick();
+    } else {
+      console.log('New chat button clicked');
+    }
   };
 
   return (

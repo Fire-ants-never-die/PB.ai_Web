@@ -214,3 +214,43 @@
 .border-danger {
   border-color: rgb(var(--danger));
 }
+
+/* Fade in animation for dropdown */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Remove focus outline from Recharts components */
+.recharts-surface,
+.recharts-surface *,
+.recharts-wrapper,
+.recharts-wrapper * {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.recharts-surface:focus,
+.recharts-surface *:focus,
+.recharts-wrapper:focus,
+.recharts-wrapper *:focus,
+.recharts-rectangle:focus,
+.recharts-rectangle:focus-visible,
+.recharts-surface path:focus,
+.recharts-surface path:focus-visible,
+.recharts-surface g:focus,
+.recharts-surface g:focus-visible,
+.recharts-surface rect:focus,
+.recharts-surface rect:focus-visible {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  stroke: none !important;
+}
