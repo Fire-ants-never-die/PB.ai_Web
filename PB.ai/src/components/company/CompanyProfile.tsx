@@ -3,7 +3,7 @@ import type { ColumnDef } from '@tanstack/react-table';
 import { DynamicTable } from '@/components/tables';
 import { useCompanyProfile } from '@/lib/api/hooks/useCompanyData';
 import { formatValue } from '@/lib/utils/format';
-import type { ProfileItem } from '@/lib/types/company';
+import type { TableRow } from '@/lib/data/mock/tableData';
 
 interface CompanyProfileProps {
   companyCode: string;
@@ -12,7 +12,7 @@ interface CompanyProfileProps {
 export const CompanyProfile = ({ companyCode }: CompanyProfileProps) => {
   const { data, isLoading, isError } = useCompanyProfile(companyCode);
 
-  const columns: ColumnDef<ProfileItem>[] = React.useMemo(
+  const columns: ColumnDef<TableRow>[] = React.useMemo(
     () => [
       {
         accessorKey: 'label',

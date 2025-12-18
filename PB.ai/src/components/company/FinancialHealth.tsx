@@ -1,6 +1,8 @@
 import { Check } from 'lucide-react';
 import { useFinancialHealth } from '@/lib/api/hooks/useCompanyData';
 
+type HealthStatus = '안전' | '위험' | '경고';
+
 interface FinancialHealthProps {
   companyCode: string;
   hideTitle?: boolean; // 제목 숨김 여부

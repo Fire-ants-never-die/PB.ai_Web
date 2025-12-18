@@ -155,7 +155,7 @@ export function FinancialAnalysisTab({ companyCode }: FinancialAnalysisTabProps)
             있습니다.
           </div>
         )}
-        <FinancialHealth hideTitle={true} />
+        <FinancialHealth companyCode={companyCode} hideTitle={true} hideDescription={true} />
 
         {/* 재무 비율 판정 표 */}
         <div className="mt-0">

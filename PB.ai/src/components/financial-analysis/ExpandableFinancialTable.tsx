@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { formatValue, formatNumber } from '@/lib/utils/format';
-import type { FinancialRatioItem, TableHeader } from '@/lib/types/company';
+import type { TableHeader } from '@/lib/types/company';
 
 interface ExpandableFinancialTableProps {
-  items: FinancialRatioItem[];
+  items: any[]; // FinancialRatioItem과 호환되도록 any 사용
   headers: TableHeader[];
   className?: string;
 }
@@ -26,7 +26,7 @@ export function ExpandableFinancialTable({
     setExpandedItems(newExpanded);
   };
 
-  const renderRow = (item: FinancialRatioItem, level: number = 0) => {
+  const renderRow = (item: any, level: number = 0) => {
     const isExpanded = expandedItems.has(item.name);
     const hasChildren = item.children && item.children.length > 0;
 
@@ -80,7 +80,7 @@ export function ExpandableFinancialTable({
         </tr>
         {hasChildren && isExpanded && item.children && (
           <>
-            {item.children.map((child) => (
+            {item.children.map((child: any) => (
               <React.Fragment key={child.name}>
                 {renderRow(child, level + 1)}
               </React.Fragment>

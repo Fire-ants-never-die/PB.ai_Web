@@ -36,7 +36,7 @@ export const SalesComposition = ({ companyCode }: SalesCompositionProps) => {
     );
   }
 
-  const salesData = data.items;
+  const salesData = data.items as any[];
 
   return (
     <div className="flex flex-col gap-8">
