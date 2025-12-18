@@ -1,15 +1,42 @@
 import { useState } from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
+import { useSalesComposition } from '@/lib/api/hooks/useCompanyData';
 
-export const SalesComposition = () => {
+interface SalesCompositionProps {
+  companyCode: string;
+}
+
+export const SalesComposition = ({ companyCode }: SalesCompositionProps) => {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const { data, isLoading, isError } = useSalesComposition(companyCode);
 
-  const salesData = [
-    { name: '라면', value: 81.8, percentage: '81.8%', color: '#5797F7' },
-    { name: '기타', value: 18.4, percentage: '18.4%', color: '#FFA353' },
-    { name: '스낵', value: 14.4, percentage: '14.4%', color: '#8DD3BB' },
-    { name: '매출 에누리등', value: 14.5, percentage: '-14.5%', color: '#FFD666' }, // Use positive value for chart
-  ];
+  if (isLoading) {
+    return (
+      <div className="flex flex-col gap-8">
+        <h2 className="text-2xl font-semibold text-[#191B1C] transition-colors hover:text-[#5797F7] cursor-default">
+          2. 매출 산업 구성
+        </h2>
+        <div className="flex items-center justify-center h-48">
+          <p className="text-gray-500">로딩 중...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (isError || !data) {
+    return (
+      <div className="flex flex-col gap-8">
+        <h2 className="text-2xl font-semibold text-[#191B1C] transition-colors hover:text-[#5797F7] cursor-default">
+          2. 매출 산업 구성
+        </h2>
+        <div className="flex items-center justify-center h-48">
+          <p className="text-red-500">데이터를 불러오는데 실패했습니다.</p>
+        </div>
+      </div>
+    );
+  }
+
+  const salesData = data.items;
 
   return (
     <div className="flex flex-col gap-8">
@@ -56,7 +83,7 @@ export const SalesComposition = () => {
           {/* Center Label */}
           <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none gap-1">
             <p className="text-[0.9375rem] text-[#58595B] leading-[150%] font-normal">총 매출액</p>
-            <p className="text-[1.5rem] text-[#191B1C] leading-[150%] font-bold">34,387억</p>
+            <p className="text-[1.5rem] text-[#191B1C] leading-[150%] font-bold">{data.totalRevenue}</p>
           </div>
         </div>
 

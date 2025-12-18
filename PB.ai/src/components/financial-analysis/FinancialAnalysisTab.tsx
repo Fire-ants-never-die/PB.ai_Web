@@ -1,32 +1,25 @@
 import { useState } from 'react';
 import { RevenueChart } from '@/components/charts/RevenueChart';
 import { NetIncomeChart } from '@/components/charts/NetIncomeChart';
-import { FinancialDataTable, type FinancialYearData } from '@/components/company/FinancialDataTable';
+import { FinancialDataTable } from '@/components/company/FinancialDataTable';
 import { FinancialHealth } from '@/components/company/FinancialHealth';
 import { FinancialRatioJudgmentTable } from './FinancialRatioJudgmentTable';
 import { ExpandableFinancialTable } from './ExpandableFinancialTable';
 import { FinancialAnalysisFooter } from './FinancialAnalysisFooter';
 import {
-  financialRatioJudgmentData,
-  liquidityAnalysisData,
-  leverageAnalysisData,
-  investmentProfitabilityData,
-  salesMarginData,
-  growthAnalysisData,
-  activityAnalysisData,
-} from '@/lib/data/mock/financialAnalysisData';
+  useFinancialOverview,
+  useFinancialRatioJudgment,
+  useFinancialAnalysisDetails,
+} from '@/lib/api/hooks/useCompanyData';
 
 interface FinancialAnalysisTabProps {
-  revenueData?: Array<{ year: string; value: number }>;
-  netIncomeData?: Array<{ year: string; netIncome: number; netIncomeRate: number }>;
-  financialTableData?: FinancialYearData[];
+  companyCode: string;
 }
 
-export function FinancialAnalysisTab({
-  revenueData,
-  netIncomeData,
-  financialTableData,
-}: FinancialAnalysisTabProps) {
+export function FinancialAnalysisTab({ companyCode }: FinancialAnalysisTabProps) {
+  const { data: overviewData, isLoading: overviewLoading } = useFinancialOverview(companyCode);
+  const { data: ratioJudgmentData, isLoading: ratioLoading } = useFinancialRatioJudgment(companyCode);
+  const { data: analysisDetailsData, isLoading: analysisLoading } = useFinancialAnalysisDetails(companyCode);
   type SectionKey =
     | 'financialStatus'
     | 'ratioJudgment'
@@ -61,74 +54,31 @@ export function FinancialAnalysisTab({
     background: 'var(--color-gray-50, #F7F9FB)',
   };
 
-  // 기본 Mock 데이터
-  const defaultRevenueData = [
-    { year: '2021', value: 246800000000 },
-    { year: '2022', value: 230500000000 },
-    { year: '2023', value: 268900000000 },
-    { year: '2024', value: 298400000000 },
-    { year: '2025/06', value: 275600000000 },
-  ];
+  // 하드코딩된 섹션 설명 텍스트
+  const sectionDescriptions = {
+    financialStatus: '농심의 기업의 재무상황을 종합적으로 보여주는 자료입니다. 한 해 동안 벌어들인 매출액, 보유하고 있는 자산의 규모, 갚아야 할 부채, 주주의 몫인 자본, 그리고 본업에서 발생한 영업이익과 최종적으로 남은 순이익을 알 수 있습니다.',
+    ratioJudgment: '농심의 재무건전성은 필수소비재 섹터 업종 중위수와 시계열 점수로 판정됩니다. 농심은 필수소비재 섹터 내에서 재무 안정성과 수익성이 뛰어난 기업으로 평가됩니다. 전반적인 재무 건전성 점수는 0.855로 \'안전 구간\'에 위치하며, 업계 평균을 상회하는 안정성을 보여주고 있습니다.',
+    stability: '안정성 분석은 기업의 재무 구조가 얼마나 건전한지를 보여주는 지표입니다. 재무상태표의 자산·부채·자본 관계를 바탕으로 평가하며, 기업의 단기지급 능력인 유동성 분석과 자본조달구조에 대한 대응능력인 레버리지 분석으로 구분됩니다.',
+    profitability: '수익성 분석은 일정기간 동안 기업의 경영성과를 나타내는 지표입니다. 투자된 자산 또는 자본 대비 창출한 이익의 정도를 의미하는 투자수익성 분석과 매출에 상응하여 창출한 이익의 정도를 나타내는 판매마진 분석으로 분류됩니다.',
+    growth: '성장성 지표는 기업의 규모와 경영성과가 전년도와 비교하여 얼마나 증가하였는가를 나타내는 지표입니다. 이를 통해 기업의 미래 경쟁력과 수익 창출 능력을 간접적으로 알 수 있어요.',
+    activity: '활동성 분석은 기업이 보유한 자산이나 자본을 얼마나 효율적으로 활용하고 있는지를 보여주는 지표입니다. 일반적으로 효율성 비율 또는 회전율이라고 부릅니다. 매출액은 투하된 자산이나 자본을 통해 만들어지는 가장 핵심적인 성과물이기 때문에, 활동성 지표는 투하 자산이나 자본 대비 얼마만큼의 매출을 창출했는지를 배수로 측정합니다.',
+  };
 
-  const defaultNetIncomeData = [
-    { year: '2021', netIncome: 141500000000, netIncomeRate: 12.5 },
-    { year: '2022', netIncome: 123800000000, netIncomeRate: 10.8 },
-    { year: '2023', netIncome: 158900000000, netIncomeRate: 18.2 },
-    { year: '2024', netIncome: 201300000000, netIncomeRate: 21.4 },
-    { year: '2025/06', netIncome: 178200000000, netIncomeRate: 15.2 },
-  ];
+  if (overviewLoading || ratioLoading || analysisLoading) {
+    return (
+      <div className="flex items-center justify-center h-96">
+        <p className="text-lg text-gray-500">데이터를 불러오는 중...</p>
+      </div>
+    );
+  }
 
-  const defaultFinancialTableData: FinancialYearData[] = [
-    {
-      year: '2020.12',
-      revenue: 246800000000,
-      totalAssets: 1890000000000,
-      totalLiabilities: 645000000000,
-      totalEquity: 1245000000000,
-      operatingIncome: 168500000000,
-      netIncome: 141500000000,
-    },
-    {
-      year: '2021.12',
-      revenue: 230500000000,
-      totalAssets: 1950000000000,
-      totalLiabilities: 678000000000,
-      totalEquity: 1272000000000,
-      operatingIncome: 145300000000,
-      netIncome: 123800000000,
-    },
-    {
-      year: '2022.12',
-      revenue: 268900000000,
-      totalAssets: 2120000000000,
-      totalLiabilities: 712000000000,
-      totalEquity: 1408000000000,
-      operatingIncome: 189400000000,
-      netIncome: 158900000000,
-    },
-    {
-      year: '2023.12',
-      revenue: 298400000000,
-      totalAssets: 2340000000000,
-      totalLiabilities: 756000000000,
-      totalEquity: 1584000000000,
-      operatingIncome: 234500000000,
-      netIncome: 201300000000,
-    },
-    {
-      year: '2024.12',
-      revenue: 340000000000,
-      totalAssets: 35974000000000,
-      totalLiabilities: 9248000000000,
-      totalEquity: 26725000000000,
-      operatingIncome: 163000000000,
-      netIncome: 157600000000,
-    },
-  ];
-
-  const finalRevenueData = revenueData || defaultRevenueData;
-  const finalNetIncomeData = netIncomeData || defaultNetIncomeData;
-  const finalFinancialTableData = financialTableData || defaultFinancialTableData;
+  if (!overviewData || !ratioJudgmentData || !analysisDetailsData) {
+    return (
+      <div className="flex items-center justify-center h-96">
+        <p className="text-lg text-red-500">데이터를 불러오는데 실패했습니다.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col min-h-screen gap-12 pb-0">
@@ -144,9 +94,7 @@ export function FinancialAnalysisTab({
         </button>
         {openedSections.financialStatus && (
           <div style={{ marginTop: '0rem', ...infoBoxStyle }}>
-            농심의 기업의 재무상황을 종합적으로 보여주는 자료입니다. 한 해 동안 벌어들인 매출액,
-            보유하고 있는 자산의 규모, 갚아야 할 부채, 주주의 몫인 자본, 그리고 본업에서 발생한
-            영업이익과 최종적으로 남은 순이익을 알 수 있습니다.
+            {sectionDescriptions.financialStatus}
           </div>
         )}
 
@@ -162,7 +110,7 @@ export function FinancialAnalysisTab({
             }}
           >
             <RevenueChart
-              data={finalRevenueData}
+              data={overviewData.revenueChart}
               className="w-full h-full"
             />
           </div>
@@ -177,7 +125,7 @@ export function FinancialAnalysisTab({
             }}
           >
             <NetIncomeChart
-              data={finalNetIncomeData}
+              data={overviewData.netIncomeChart}
               className="w-full h-full"
             />
           </div>
@@ -185,7 +133,7 @@ export function FinancialAnalysisTab({
 
         {/* 재무 데이터 표 */}
         <div className="mt-6">
-          <FinancialDataTable data={finalFinancialTableData} />
+          <FinancialDataTable data={overviewData.financialTable} />
         </div>
       </div>
 
@@ -211,7 +159,7 @@ export function FinancialAnalysisTab({
 
         {/* 재무 비율 판정 표 */}
         <div className="mt-0">
-          <FinancialRatioJudgmentTable data={financialRatioJudgmentData} />
+          <FinancialRatioJudgmentTable data={ratioJudgmentData.ratioJudgmentTable} />
         </div>
       </div>
 
@@ -227,27 +175,24 @@ export function FinancialAnalysisTab({
         </button>
         {openedSections.stability && (
           <div style={{ marginTop: '0rem', ...infoBoxStyle }}>
-            안정성 분석은 기업의 재무 구조가 얼마나 건전한지를 보여주는 지표입니다. 재무상태표의
-            자산·부채·자본 관계를 바탕으로 평가하며, 기업의 단기지급 능력인 유동성 분석과
-            자본조달구조에 대한 대응능력인 레버리지 분석으로 구분됩니다.
+            {sectionDescriptions.stability}
           </div>
         )}
 
-        {/* 3.1. 유동성 분석 */}
-        <div className="flex flex-col gap-6" style={{ marginTop: '0.6rem' }}>
-          <h3 className="text-xl font-semibold text-[#191B1C]">
-            {liquidityAnalysisData.title}
-          </h3>
-          <ExpandableFinancialTable items={liquidityAnalysisData.items} />
-        </div>
-
-        {/* 3.2. 레버리지 분석 */}
-        <div className="flex flex-col gap-6" style={{ marginTop: '0.6rem' }}>
-          <h3 className="text-xl font-semibold text-[#191B1C]">
-            {leverageAnalysisData.title}
-          </h3>
-          <ExpandableFinancialTable items={leverageAnalysisData.items} />
-        </div>
+        {/* 안정성 분석 하위 섹션들 */}
+        {analysisDetailsData.sections.find(s => s.id === 'stability')?.subsections.map((subsection, idx) => (
+          <div key={idx} className="flex flex-col gap-6" style={{ marginTop: '0.6rem' }}>
+            {subsection.title && (
+              <h3 className="text-xl font-semibold text-[#191B1C]">
+                {subsection.title}
+              </h3>
+            )}
+            <ExpandableFinancialTable
+              items={subsection.items}
+              headers={subsection.tableHeaders}
+            />
+          </div>
+        ))}
       </div>
 
       {/* 4. 수익성 분석 */}
@@ -262,27 +207,24 @@ export function FinancialAnalysisTab({
         </button>
         {openedSections.profitability && (
           <div style={{ marginTop: '0rem', ...infoBoxStyle }}>
-            수익성 분석은 일정기간 동안 기업의 경영성과를 나타내는 지표입니다. 투자된 자산 또는
-            자본 대비 창출한 이익의 정도를 의미하는 투자수익성 분석과 매출에 상응하여 창출한 이익의
-            정도를 나타내는 판매마진 분석으로 분류됩니다.
+            {sectionDescriptions.profitability}
           </div>
         )}
 
-        {/* 4.1. 투자수익성 분석 */}
-        <div className="flex flex-col gap-6" style={{ marginTop: '0.6rem' }}>
-          <h3 className="text-xl font-semibold text-[#191B1C]">
-            {investmentProfitabilityData.title}
-          </h3>
-          <ExpandableFinancialTable items={investmentProfitabilityData.items} />
-        </div>
-
-        {/* 4.2. 판매마진 분석 */}
-        <div className="flex flex-col gap-6" style={{ marginTop: '0.6rem' }}>
-          <h3 className="text-xl font-semibold text-[#191B1C]">
-            {salesMarginData.title}
-          </h3>
-          <ExpandableFinancialTable items={salesMarginData.items} />
-        </div>
+        {/* 수익성 분석 하위 섹션들 */}
+        {analysisDetailsData.sections.find(s => s.id === 'profitability')?.subsections.map((subsection, idx) => (
+          <div key={idx} className="flex flex-col gap-6" style={{ marginTop: '0.6rem' }}>
+            {subsection.title && (
+              <h3 className="text-xl font-semibold text-[#191B1C]">
+                {subsection.title}
+              </h3>
+            )}
+            <ExpandableFinancialTable
+              items={subsection.items}
+              headers={subsection.tableHeaders}
+            />
+          </div>
+        ))}
       </div>
 
       {/* 5. 성장성 분석 */}
@@ -297,12 +239,24 @@ export function FinancialAnalysisTab({
         </button>
         {openedSections.growth && (
           <div style={{ marginTop: '0rem', ...infoBoxStyle }}>
-            성장성 지표는 기업의 규모와 경영성과가 전년도와 비교하여 얼마나 증가하였는가를
-            나타내는 지표입니다. 이를 통해 기업의 미래 경쟁력과 수익 창출 능력을 간접적으로 알 수
-            있어요.
+            {sectionDescriptions.growth}
           </div>
         )}
-        <ExpandableFinancialTable items={growthAnalysisData.items} />
+
+        {/* 성장성 분석 하위 섹션들 */}
+        {analysisDetailsData.sections.find(s => s.id === 'growth')?.subsections.map((subsection, idx) => (
+          <div key={idx} className="flex flex-col gap-6" style={{ marginTop: idx === 0 ? '0rem' : '0.6rem' }}>
+            {subsection.title && (
+              <h3 className="text-xl font-semibold text-[#191B1C]">
+                {subsection.title}
+              </h3>
+            )}
+            <ExpandableFinancialTable
+              items={subsection.items}
+              headers={subsection.tableHeaders}
+            />
+          </div>
+        ))}
       </div>
 
       {/* 6. 활동성 분석 */}
@@ -317,13 +271,24 @@ export function FinancialAnalysisTab({
         </button>
         {openedSections.activity && (
           <div style={{ marginTop: '0rem', ...infoBoxStyle }}>
-            활동성 분석은 기업이 보유한 자산이나 자본을 얼마나 효율적으로 활용하고 있는지를
-            보여주는 지표입니다. 일반적으로 효율성 비율 또는 회전율이라고 부릅니다. 매출액은 투하된
-            자산이나 자본을 통해 만들어지는 가장 핵심적인 성과물이기 때문에, 활동성 지표는 투하 자산이나
-            자본 대비 얼마만큼의 매출을 창출했는지를 배수로 측정합니다.
+            {sectionDescriptions.activity}
           </div>
         )}
-        <ExpandableFinancialTable items={activityAnalysisData.items} />
+
+        {/* 활동성 분석 하위 섹션들 */}
+        {analysisDetailsData.sections.find(s => s.id === 'activity')?.subsections.map((subsection, idx) => (
+          <div key={idx} className="flex flex-col gap-6" style={{ marginTop: idx === 0 ? '0rem' : '0.6rem' }}>
+            {subsection.title && (
+              <h3 className="text-xl font-semibold text-[#191B1C]">
+                {subsection.title}
+              </h3>
+            )}
+            <ExpandableFinancialTable
+              items={subsection.items}
+              headers={subsection.tableHeaders}
+            />
+          </div>
+        ))}
       </div>
 
       {/* Footer */}

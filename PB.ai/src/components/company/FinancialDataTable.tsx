@@ -19,8 +19,11 @@ interface FinancialDataTableProps {
   className?: string;
 }
 
-// 숫자를 억 원 단위로 포맷
-function formatToEok(value: number): string {
+// 숫자를 억 원 단위로 포맷 (null이면 "-")
+function formatToEok(value: number | null | undefined): string {
+  if (value === null || value === undefined) {
+    return '-';
+  }
   const eok = value / 100000000;
   return `${eok.toLocaleString('ko-KR', { maximumFractionDigits: 0 })}억`;
 }
@@ -32,6 +35,7 @@ export function FinancialDataTable({ data, className }: FinancialDataTableProps)
       {
         accessorKey: 'year',
         header: '년도',
+        cell: ({ row }) => row.original.year || '-',
       },
       {
         accessorKey: 'revenue',

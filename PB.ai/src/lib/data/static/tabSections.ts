@@ -8,10 +8,12 @@ export const tabSections: Record<string, string[]> = {
     '산업 설명',
   ],
   financial: [
-    '손익계산서',
-    '재무상태표',
-    '현금흐름표',
-    '연도별 대주주 현황',
+    '재무상황',
+    '재무 비율 판정',
+    '안정성 분석',
+    '수익성 분석',
+    '성장성 분석',
+    '활동성분석',
   ],
   investment: [
     'Per Share (주당 지표)',

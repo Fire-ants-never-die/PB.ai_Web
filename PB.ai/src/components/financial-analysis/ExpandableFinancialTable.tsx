@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
-import type { FinancialRatioItem } from '@/lib/data/mock/financialAnalysisData';
+import { formatValue, formatNumber } from '@/lib/utils/format';
+import type { FinancialRatioItem, TableHeader } from '@/lib/types/company';
 
 interface ExpandableFinancialTableProps {
   items: FinancialRatioItem[];
+  headers: TableHeader[];
   className?: string;
 }
 
 export function ExpandableFinancialTable({
   items,
+  headers,
   className,
 }: ExpandableFinancialTableProps) {
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
@@ -58,42 +61,22 @@ export function ExpandableFinancialTable({
               )}
             </div>
           </td>
-          <td
-            className="px-4 py-3 text-[0.875rem] font-normal text-[#191B1C] leading-[150%] text-center"
-            style={{ fontFamily: 'var(--typography-type, "Pretendard GOV")' }}
-          >
-            {typeof item.values.year2023 === 'number'
-              ? item.values.year2023.toLocaleString('ko-KR')
-              : item.values.year2023}
-          </td>
-          <td
-            className="px-4 py-3 text-[0.875rem] font-normal text-[#191B1C] leading-[150%] text-center"
-            style={{ fontFamily: 'var(--typography-type, "Pretendard GOV")' }}
-          >
-            {typeof item.values.timeSeriesAverage === 'number'
-              ? item.values.timeSeriesAverage.toLocaleString('ko-KR')
-              : item.values.timeSeriesAverage}
-          </td>
-          <td
-            className="px-4 py-3 text-[0.875rem] font-normal text-[#191B1C] leading-[150%] text-center"
-            style={{ fontFamily: 'var(--typography-type, "Pretendard GOV")' }}
-          >
-            {typeof item.values.industryMedian === 'number'
-              ? item.values.industryMedian.toLocaleString('ko-KR')
-              : item.values.industryMedian}
-          </td>
-          <td
-            className="px-4 py-3 text-[0.875rem] font-normal text-[#191B1C] leading-[150%] text-center"
-            style={{ fontFamily: 'var(--typography-type, "Pretendard GOV")' }}
-          >
-            {item.values.timeSeriesScore}
-          </td>
-          <td
-            className="px-4 py-3 text-[0.875rem] font-normal text-[#191B1C] leading-[150%] text-center"
-            style={{ fontFamily: 'var(--typography-type, "Pretendard GOV")' }}
-          >
-            {item.values.industryScore}
-          </td>
+          {headers.slice(1).map((header) => {
+            const value = item.values[header.key];
+            const displayValue = typeof value === 'number'
+              ? formatNumber(value)
+              : formatValue(value);
+
+            return (
+              <td
+                key={header.key}
+                className="px-4 py-3 text-[0.875rem] font-normal text-[#191B1C] leading-[150%] text-center"
+                style={{ fontFamily: 'var(--typography-type, "Pretendard GOV")' }}
+              >
+                {displayValue}
+              </td>
+            );
+          })}
         </tr>
         {hasChildren && isExpanded && item.children && (
           <>
@@ -114,42 +97,15 @@ export function ExpandableFinancialTable({
         <table className="w-full border-collapse">
           <thead>
             <tr className="bg-[#FCFCFD]" style={{ borderBottom: '1px solid #D7D9DB' }}>
-              <th
-                className="px-4 py-3 text-center text-[0.8125rem] font-normal text-[#58595B] leading-[150%]"
-                style={{ fontFamily: 'var(--typography-type, "Pretendard GOV")' }}
-              >
-                {/* 첫 번째 컬럼은 비어있음 */}
-              </th>
-              <th
-                className="px-4 py-3 text-center text-[0.8125rem] font-normal text-[#58595B] leading-[150%]"
-                style={{ fontFamily: 'var(--typography-type, "Pretendard GOV")' }}
-              >
-                2023
-              </th>
-              <th
-                className="px-4 py-3 text-center text-[0.8125rem] font-normal text-[#58595B] leading-[150%]"
-                style={{ fontFamily: 'var(--typography-type, "Pretendard GOV")' }}
-              >
-                시계열평균
-              </th>
-              <th
-                className="px-4 py-3 text-center text-[0.8125rem] font-normal text-[#58595B] leading-[150%]"
-                style={{ fontFamily: 'var(--typography-type, "Pretendard GOV")' }}
-              >
-                업종중위수
-              </th>
-              <th
-                className="px-4 py-3 text-center text-[0.8125rem] font-normal text-[#58595B] leading-[150%]"
-                style={{ fontFamily: 'var(--typography-type, "Pretendard GOV")' }}
-              >
-                시계열점수
-              </th>
-              <th
-                className="px-4 py-3 text-center text-[0.8125rem] font-normal text-[#58595B] leading-[150%]"
-                style={{ fontFamily: 'var(--typography-type, "Pretendard GOV")' }}
-              >
-                업종점수
-              </th>
+              {headers.map((header) => (
+                <th
+                  key={header.key}
+                  className="px-4 py-3 text-center text-[0.8125rem] font-normal text-[#58595B] leading-[150%]"
+                  style={{ fontFamily: 'var(--typography-type, "Pretendard GOV")' }}
+                >
+                  {header.label}
+                </th>
+              ))}
             </tr>
           </thead>
           <tbody>

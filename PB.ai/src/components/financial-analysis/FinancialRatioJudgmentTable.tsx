@@ -1,8 +1,9 @@
-import type { FinancialRatioJudgmentData } from '@/lib/data/mock/financialAnalysisData';
+import type { RatioJudgmentRow } from '@/lib/types/company';
 import { cn } from '@/lib/utils';
+import { formatValue } from '@/lib/utils/format';
 
 interface FinancialRatioJudgmentTableProps {
-  data: FinancialRatioJudgmentData[];
+  data: RatioJudgmentRow[];
   className?: string;
 }
 
@@ -107,49 +108,49 @@ export function FinancialRatioJudgmentTable({
                   className="px-4 py-3 text-[0.875rem] font-semibold text-[#191B1C] leading-[150%] text-left"
                   style={{ fontFamily: 'var(--typography-type, "Pretendard GOV")' }}
                 >
-                  {item.indicator}
+                  {formatValue(item.indicator)}
                 </td>
                 <td
                   colSpan={1}
                   className="px-4 py-3 text-[0.875rem] font-normal text-[#191B1C] leading-[150%] text-center"
                   style={{ fontFamily: 'var(--typography-type, "Pretendard GOV")' }}
                 >
-                  {item.stability}
+                  {formatValue(item.stability)}
                 </td>
                 <td
                   colSpan={1}
                   className="px-4 py-3 text-[0.875rem] font-normal text-[#191B1C] leading-[150%] text-center"
                   style={{ fontFamily: 'var(--typography-type, "Pretendard GOV")' }}
                 >
-                  {item.leverage}
+                  {formatValue(item.leverage)}
                 </td>
                 <td
                   colSpan={1}
                   className="px-4 py-3 text-[0.875rem] font-normal text-[#191B1C] leading-[150%] text-center"
                   style={{ fontFamily: 'var(--typography-type, "Pretendard GOV")' }}
                 >
-                  {item.investmentProfitability}
+                  {formatValue(item.investmentProfitability)}
                 </td>
                 <td
                   colSpan={1}
                   className="px-4 py-3 text-[0.875rem] font-normal text-[#191B1C] leading-[150%] text-center"
                   style={{ fontFamily: 'var(--typography-type, "Pretendard GOV")' }}
                 >
-                  {item.salesMargin}
+                  {formatValue(item.salesMargin)}
                 </td>
                 <td
                   colSpan={2}
                   className="px-4 py-3 text-[0.875rem] font-normal text-[#191B1C] leading-[150%] text-center"
                   style={{ fontFamily: 'var(--typography-type, "Pretendard GOV")' }}
                 >
-                  {item.activity}
+                  {formatValue(item.activity)}
                 </td>
                 <td
                   colSpan={2}
                   className="px-4 py-3 text-[0.875rem] font-normal text-[#191B1C] leading-[150%] text-center"
                   style={{ fontFamily: 'var(--typography-type, "Pretendard GOV")' }}
                 >
-                  {item.growth}
+                  {formatValue(item.growth)}
                 </td>
               </tr>
             ))}

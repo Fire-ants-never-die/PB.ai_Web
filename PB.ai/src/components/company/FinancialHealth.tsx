@@ -1,32 +1,52 @@
 import { Check } from 'lucide-react';
-
-type HealthStatus = '안전' | '위험' | '경고';
-
-interface HealthCategory {
-  label: '유동성' | '레버리지' | '투자수익성' | '판매마진' | '활동성' | '성장성';
-  status: HealthStatus;
-}
+import { useFinancialHealth } from '@/lib/api/hooks/useCompanyData';
 
 interface FinancialHealthProps {
-  scoreValue?: number; // -1 ~ 1 사이의 값, 기본값: 0.855
-  healthCategories?: HealthCategory[];
+  companyCode: string;
   hideTitle?: boolean; // 제목 숨김 여부
+  hideDescription?: boolean; // 설명 숨김 여부 (재무현황분석 페이지용)
   onDetailClick?: () => void; // 상세보기 버튼 클릭 핸들러
 }
 
 export const FinancialHealth = ({
-  scoreValue = 0.855,
-  healthCategories = [
-    { label: '유동성', status: '안전' },
-    { label: '레버리지', status: '안전' },
-    { label: '투자수익성', status: '안전' },
-    { label: '판매마진', status: '안전' },
-    { label: '활동성', status: '안전' },
-    { label: '성장성', status: '안전' },
-  ],
+  companyCode,
   hideTitle = false,
+  hideDescription = false,
   onDetailClick,
 }: FinancialHealthProps) => {
+  const { data, isLoading, isError } = useFinancialHealth(companyCode);
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col gap-2 w-full">
+        {!hideTitle && (
+          <h2 className="text-2xl font-semibold text-[#191B1C] transition-colors hover:text-[#5797F7] cursor-default">
+            4. 재무건전성
+          </h2>
+        )}
+        <div className="flex items-center justify-center h-48">
+          <p className="text-gray-500">로딩 중...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (isError || !data) {
+    return (
+      <div className="flex flex-col gap-2 w-full">
+        {!hideTitle && (
+          <h2 className="text-2xl font-semibold text-[#191B1C] transition-colors hover:text-[#5797F7] cursor-default">
+            4. 재무건전성
+          </h2>
+        )}
+        <div className="flex items-center justify-center h-48">
+          <p className="text-red-500">데이터를 불러오는데 실패했습니다.</p>
+        </div>
+      </div>
+    );
+  }
+
+  const { scoreValue, healthCategories, description } = data;
   // 상태별 색상 매핑
   const getStatusColor = (status: HealthStatus): string => {
     switch (status) {
@@ -68,10 +88,12 @@ export const FinancialHealth = ({
           minHeight: 0,
         }}
       >
-        {/* Dynamic description - mock data */}
-        <p className="text-[17px] text-[#191B1C] leading-[1.5] font-normal">
-          농심의 재무건전성은 필수소비재 섹터 업종 중위수와 시계열 점수로 판정됩니다
-        </p>
+        {/* Dynamic description */}
+        {!hideDescription && (
+          <p className="text-[17px] text-[#191B1C] leading-[1.5] font-normal">
+            {description}
+          </p>
+        )}
 
         {/* Score bar */}
         <div className="relative pt-8 pb-6">
@@ -101,46 +123,21 @@ export const FinancialHealth = ({
         </div>
 
         {/* Health categories */}
-        <div className="flex items-center justify-between leading-[0]">
+        <div className="flex flex-wrap items-center justify-between gap-4 leading-none">
           {healthCategories.map((category, index) => (
-            <div key={index} className="inline-grid grid-cols-[max-content] grid-rows-[max-content] justify-items-start shrink-0">
-              <div
-                className="col-[1] row-[1] w-[100px] h-[100px] border border-solid"
-                style={{ borderColor: getStatusColor(category.status) }}
-              />
-              <p
-                className="col-[1] row-[1] relative text-[15px] text-[#191B1C] font-normal leading-[1.5] whitespace-nowrap"
-                style={{
-                  marginLeft: category.label === '유동성' ? '31px' :
-                              category.label === '레버리지' ? '23.8px' :
-                              category.label === '투자수익성' ? '17.2px' :
-                              category.label === '판매마진' ? '23.8px' :
-                              category.label === '활동성' ? '30.4px' : '31px',
-                  marginTop: category.label === '투자수익성' ||
-                             category.label === '판매마진' ||
-                             category.label === '활동성' ||
-                             category.label === '성장성' ? '30px' : '25px'
-                }}
-              >
-                {category.label}
-              </p>
-              <p
-                className="col-[1] row-[1] relative text-[15px] text-[#191B1C] font-normal leading-[1.5] whitespace-nowrap"
-                style={{
-                  marginLeft: category.label === '유동성' ? '37px' :
-                              category.label === '레버리지' ? '36.6px' :
-                              category.label === '투자수익성' ? '37.2px' :
-                              category.label === '판매마진' ? '36.8px' :
-                              category.label === '활동성' ? '37.4px' : '37px',
-                  marginTop: category.label === '유동성' ||
-                             category.label === '투자수익성' ||
-                             category.label === '판매마진' ||
-                             category.label === '활동성' ||
-                             category.label === '성장성' ? '55px' : '50px'
-                }}
-              >
-                {category.status}
-              </p>
+            <div
+              key={index}
+              className="relative flex items-center justify-center w-[100px] h-[100px] border border-solid rounded-md shrink-0"
+              style={{ borderColor: getStatusColor(category.status) }}
+            >
+              <div className="flex flex-col items-center justify-center gap-1">
+                <p className="text-[15px] text-[#191B1C] font-semibold leading-[1.4] whitespace-nowrap">
+                  {category.label}
+                </p>
+                <p className="text-[15px] text-[#191B1C] font-normal leading-[1.4] whitespace-nowrap">
+                  {category.status}
+                </p>
+              </div>
             </div>
           ))}
         </div>

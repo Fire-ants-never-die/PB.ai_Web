@@ -9,10 +9,10 @@ import { IndustryDescription } from '@/components/company/IndustryDescription';
 import { RevenueChart } from '@/components/charts/RevenueChart';
 import { NetIncomeChart } from '@/components/charts/NetIncomeChart';
 import { FinancialDataTable } from '@/components/company/FinancialDataTable';
-import type { FinancialYearData } from '@/components/company/FinancialDataTable';
 import { FinancialAnalysisTab } from '@/components/financial-analysis/FinancialAnalysisTab';
 import { ChatWindow } from '@/components/chat/ChatWindow';
 import { FloatingActionButton } from '@/components/layout/FloatingActionButton';
+import { useFinancialOverview } from '@/lib/api/hooks/useCompanyData';
 
 const CompanyOverview = () => {
   const [searchParams] = useSearchParams();
@@ -20,8 +20,11 @@ const CompanyOverview = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [isChatOpen, setIsChatOpen] = useState(false);
 
-  const companyCode = searchParams.get('code');
+  const companyCode = searchParams.get('code') || '001234'; // 기본 코드
   const companyName = searchParams.get('name') || '농심'; // 기본값은 농심
+
+  // API 데이터 호출
+  const { data: financialData, isLoading } = useFinancialOverview(companyCode);
 
   // 회사 코드가 없으면 메인 페이지로 리다이렉트
   useEffect(() => {
@@ -37,83 +40,34 @@ const CompanyOverview = () => {
     }
   }, [activeTab]);
 
-  // API 호출 (실제로는 백엔드에서 재무제표 데이터를 받아옴)
-  // TODO: 받은 데이터를 실제로 사용하도록 구현 필요
-  // const { data: financialStatements } = useFinancialStatements(companyCode || '', 'annual');
-  // const { data: balanceSheets } = useBalanceSheets(companyCode || '', 'annual');
+  // 회사 코드에 따른 로고/타이틀 이미지 매핑 (하드코딩)
+  const getCompanyAssets = (code: string) => {
+    const assetMap: Record<string, { logo: string; title: string }> = {
+      '001234': { logo: '/nongshim_logo.svg', title: '/nongshim_title.png' },
+      'cj': { logo: '/cj_logo.png', title: '/cj_logo.png' },
+      'pb': { logo: '/pb_logo.svg', title: '/pb_logo.svg' },
+      // 추가 기업들 매핑
+    };
+    return assetMap[code] || { logo: '/nongshim_logo.svg', title: '/nongshim_title.png' };
+  };
 
-  // Mock 데이터 - 실제로는 API에서 받아올 데이터
-  const revenueData = [
-    { year: '2021', value: 246800000000 },
-    { year: '2022', value: 230500000000 },
-    { year: '2023', value: 268900000000 },
-    { year: '2024', value: 298400000000 },
-    { year: '2025/06', value: 275600000000 },
-  ];
-
-  const netIncomeData = [
-    { year: '2021', netIncome: 141500000000, netIncomeRate: 12.5 },
-    { year: '2022', netIncome: 123800000000, netIncomeRate: 10.8 },
-    { year: '2023', netIncome: 158900000000, netIncomeRate: 18.2 },
-    { year: '2024', netIncome: 201300000000, netIncomeRate: 21.4 },
-    { year: '2025/06', netIncome: 178200000000, netIncomeRate: 15.2 },
-  ];
-
-  const financialTableData: FinancialYearData[] = [
-    {
-      year: '2021',
-      revenue: 246800000000,
-      totalAssets: 1890000000000,
-      totalLiabilities: 645000000000,
-      totalEquity: 1245000000000,
-      operatingIncome: 168500000000,
-      netIncome: 141500000000,
-    },
-    {
-      year: '2022',
-      revenue: 230500000000,
-      totalAssets: 1950000000000,
-      totalLiabilities: 678000000000,
-      totalEquity: 1272000000000,
-      operatingIncome: 145300000000,
-      netIncome: 123800000000,
-    },
-    {
-      year: '2023',
-      revenue: 268900000000,
-      totalAssets: 2120000000000,
-      totalLiabilities: 712000000000,
-      totalEquity: 1408000000000,
-      operatingIncome: 189400000000,
-      netIncome: 158900000000,
-    },
-    {
-      year: '2024',
-      revenue: 298400000000,
-      totalAssets: 2340000000000,
-      totalLiabilities: 756000000000,
-      totalEquity: 1584000000000,
-      operatingIncome: 234500000000,
-      netIncome: 201300000000,
-    },
-    {
-      year: '2025/06',
-      revenue: 275600000000,
-      totalAssets: 2410000000000,
-      totalLiabilities: 789000000000,
-      totalEquity: 1621000000000,
-      operatingIncome: 212800000000,
-      netIncome: 178200000000,
-    },
-  ];
+  const companyAssets = getCompanyAssets(companyCode);
 
   const renderTabContent = () => {
+    if (isLoading) {
+      return (
+        <div className="flex items-center justify-center h-96">
+          <p className="text-lg text-gray-500">데이터를 불러오는 중...</p>
+        </div>
+      );
+    }
+
     switch (activeTab) {
       case 'overview':
         return (
           <div className="flex flex-col gap-12">
-            <CompanyProfile />
-            <SalesComposition />
+            <CompanyProfile companyCode={companyCode} />
+            <SalesComposition companyCode={companyCode} />
 
             {/* 새로운 재무 현황 섹션 */}
             <div className="flex flex-col gap-8">
@@ -135,7 +89,7 @@ const CompanyOverview = () => {
                   }}
                 >
                   <RevenueChart
-                    data={revenueData}
+                    data={financialData?.revenueChart || []}
                     className="w-full h-full"
                   />
                 </div>
@@ -152,7 +106,7 @@ const CompanyOverview = () => {
                   }}
                 >
                   <NetIncomeChart
-                    data={netIncomeData}
+                    data={financialData?.netIncomeChart || []}
                     className="w-full h-full"
                   />
                 </div>
@@ -160,22 +114,16 @@ const CompanyOverview = () => {
 
               {/* 재무 데이터 표 */}
               <div className="mt-6">
-                <FinancialDataTable data={financialTableData} />
+                <FinancialDataTable data={financialData?.financialTable || []} />
               </div>
             </div>
 
-            <FinancialHealth onDetailClick={() => setActiveTab('financial')} />
-            <IndustryDescription />
+            <FinancialHealth companyCode={companyCode} onDetailClick={() => setActiveTab('financial')} />
+            <IndustryDescription companyCode={companyCode} />
           </div>
         );
       case 'financial':
-        return (
-          <FinancialAnalysisTab
-            revenueData={revenueData}
-            netIncomeData={netIncomeData}
-            financialTableData={financialTableData}
-          />
-        );
+        return <FinancialAnalysisTab companyCode={companyCode} />;
       case 'investment':
         return (
           <div className="flex items-center justify-center h-96">
@@ -207,11 +155,11 @@ const CompanyOverview = () => {
   return (
     <PageLayout title="">
       <div className="max-w-[920px] mx-auto">
-        {/* 로고 이미지 - CompanyTabs 바로 위에 왼쪽 정렬 */}
+        {/* 로고 이미지 - CompanyTabs 바로 위에 왼쪽 정렬 (하드코딩) */}
         <div className="mb-6">
           <img
-            src="/nongshim_title.png"
-            alt="로고"
+            src={companyAssets.title}
+            alt={`${companyName} 로고`}
             className="h-auto"
             style={{ maxHeight: '60px' }}
           />
