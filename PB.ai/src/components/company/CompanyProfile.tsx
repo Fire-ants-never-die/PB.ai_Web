@@ -105,7 +105,11 @@ export const CompanyProfile = ({ companyCode }: CompanyProfileProps) => {
 
     // profile이 배열인 경우
     if (Array.isArray(data.profile)) {
-      profileArray = data.profile;
+      // TableRow 또는 ProfileItem을 { label, value } 형식으로 변환
+      profileArray = data.profile.map((item: any) => ({
+        label: item.label || item.name || '',
+        value: item.value || String(item),
+      }));
     }
     // profile이 객체인 경우 (동적 키-값 구조)
     else if (data.profile && typeof data.profile === 'object') {
