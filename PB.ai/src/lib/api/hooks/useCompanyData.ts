@@ -259,7 +259,7 @@ export const useFinancialAnalysisDetails = (companyCode: string) => {
                   title: liquidityAnalysisData.title,
                   tableHeaders: [
                     { key: 'indicator', label: '' },
-                    { key: 'year2023', label: '2023' },
+                    { key: 'year2023', label: '2024' },
                     { key: 'timeSeriesAverage', label: '시계열평균' },
                     { key: 'industryMedian', label: '업종중위수' },
                     { key: 'timeSeriesScore', label: '시계열점수' },
@@ -271,7 +271,7 @@ export const useFinancialAnalysisDetails = (companyCode: string) => {
                   title: leverageAnalysisData.title,
                   tableHeaders: [
                     { key: 'indicator', label: '' },
-                    { key: 'year2023', label: '2023' },
+                    { key: 'year2023', label: '2024' },
                     { key: 'timeSeriesAverage', label: '시계열평균' },
                     { key: 'industryMedian', label: '업종중위수' },
                     { key: 'timeSeriesScore', label: '시계열점수' },
@@ -289,7 +289,7 @@ export const useFinancialAnalysisDetails = (companyCode: string) => {
                   title: investmentProfitabilityData.title,
                   tableHeaders: [
                     { key: 'indicator', label: '' },
-                    { key: 'year2023', label: '2023' },
+                    { key: 'year2023', label: '2024' },
                     { key: 'timeSeriesAverage', label: '시계열평균' },
                     { key: 'industryMedian', label: '업종중위수' },
                     { key: 'timeSeriesScore', label: '시계열점수' },
@@ -301,7 +301,7 @@ export const useFinancialAnalysisDetails = (companyCode: string) => {
                   title: salesMarginData.title,
                   tableHeaders: [
                     { key: 'indicator', label: '' },
-                    { key: 'year2023', label: '2023' },
+                    { key: 'year2023', label: '2024' },
                     { key: 'timeSeriesAverage', label: '시계열평균' },
                     { key: 'industryMedian', label: '업종중위수' },
                     { key: 'timeSeriesScore', label: '시계열점수' },
@@ -319,7 +319,7 @@ export const useFinancialAnalysisDetails = (companyCode: string) => {
                   title: '',
                   tableHeaders: [
                     { key: 'indicator', label: '' },
-                    { key: 'year2023', label: '2023' },
+                    { key: 'year2023', label: '2024' },
                     { key: 'timeSeriesAverage', label: '시계열평균' },
                     { key: 'industryMedian', label: '업종중위수' },
                     { key: 'timeSeriesScore', label: '시계열점수' },
@@ -337,7 +337,7 @@ export const useFinancialAnalysisDetails = (companyCode: string) => {
                   title: '',
                   tableHeaders: [
                     { key: 'indicator', label: '' },
-                    { key: 'year2023', label: '2023' },
+                    { key: 'year2023', label: '2024' },
                     { key: 'timeSeriesAverage', label: '시계열평균' },
                     { key: 'industryMedian', label: '업종중위수' },
                     { key: 'timeSeriesScore', label: '시계열점수' },

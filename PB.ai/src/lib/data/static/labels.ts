@@ -100,7 +100,7 @@ export const INDICATORS_LABELS = {
   stability: '안정성 분석',
   activity: '활동성 분석',
   category: '지표명',
-  current: '2023',
+  current: '2024',
   comparison: '비교연도',
   industryAvg: '업계평균',
   yearChange: '전년대비',
