@@ -71,35 +71,9 @@ export const CompanyProfile = ({ companyCode }: CompanyProfileProps) => {
     []
   );
 
-  if (isLoading) {
-    return (
-      <div className="flex flex-col gap-8">
-        <h2 className="text-2xl font-semibold text-[#191B1C] transition-colors hover:text-[#5797F7] cursor-default">
-          1. 기업 프로필
-        </h2>
-        <div className="flex items-center justify-center h-48">
-          <p className="text-gray-500">로딩 중...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (isError || !data) {
-    return (
-      <div className="flex flex-col gap-8">
-        <h2 className="text-2xl font-semibold text-[#191B1C] transition-colors hover:text-[#5797F7] cursor-default">
-          1. 기업 프로필
-        </h2>
-        <div className="flex items-center justify-center h-48">
-          <p className="text-red-500">데이터를 불러오는데 실패했습니다.</p>
-        </div>
-      </div>
-    );
-  }
-
-  // API 응답을 배열 형식으로 변환하고 티커/고유번호 제외
+  // API 응답을 배열 형식으로 변환하고 티커/고유번호 제외 (모든 hooks는 early return 전에 호출되어야 함)
   const filteredProfile = React.useMemo(() => {
-    if (!data) return [];
+    if (!data?.profile) return [];
 
     let profileArray: Array<{ label: string; value: string }> = [];
 
@@ -112,7 +86,7 @@ export const CompanyProfile = ({ companyCode }: CompanyProfileProps) => {
       }));
     }
     // profile이 객체인 경우 (동적 키-값 구조)
-    else if (data.profile && typeof data.profile === 'object') {
+    else if (typeof data.profile === 'object') {
       profileArray = Object.entries(data.profile).map(([key, value]) => ({
         label: key,
         value: String(value),
@@ -156,7 +130,33 @@ export const CompanyProfile = ({ companyCode }: CompanyProfileProps) => {
         );
       }
     );
-  }, [data]);
+  }, [data?.profile]);
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col gap-8">
+        <h2 className="text-2xl font-semibold text-[#191B1C] transition-colors hover:text-[#5797F7] cursor-default">
+          1. 기업 프로필
+        </h2>
+        <div className="flex items-center justify-center h-48">
+          <p className="text-gray-500">로딩 중...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (isError || !data) {
+    return (
+      <div className="flex flex-col gap-8">
+        <h2 className="text-2xl font-semibold text-[#191B1C] transition-colors hover:text-[#5797F7] cursor-default">
+          1. 기업 프로필
+        </h2>
+        <div className="flex items-center justify-center h-48">
+          <p className="text-red-500">데이터를 불러오는데 실패했습니다.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-8">
