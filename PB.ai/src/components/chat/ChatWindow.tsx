@@ -27,6 +27,68 @@ const tabLabels: Record<string, string> = {
   valuation: '주식가치평가',
 };
 
+// 마크다운을 HTML로 변환하는 함수
+function formatMarkdown(text: string): string {
+  if (!text) return '';
+
+  // 리스트 처리 - 먼저 리스트를 처리 (다른 마크다운보다 먼저)
+  const lines = text.split('\n');
+  const processedLines: string[] = [];
+  let inList = false;
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const isListItem = /^\s*-\s+(.+)$/.test(line);
+
+    if (isListItem) {
+      if (!inList) {
+        processedLines.push('<ul style="margin-top: 0.5rem; margin-bottom: 0.5rem; padding-left: 1.5rem;">');
+        inList = true;
+      }
+      const content = line.replace(/^\s*-\s+(.+)$/, '$1');
+      processedLines.push(`<li style="margin-bottom: 0.25rem;">${content}</li>`);
+    } else {
+      if (inList) {
+        processedLines.push('</ul>');
+        inList = false;
+      }
+      processedLines.push(line);
+    }
+  }
+
+  if (inList) {
+    processedLines.push('</ul>');
+  }
+
+  let html = processedLines.join('\n');
+
+  // 헤딩 처리 (# 헤딩) - 줄 시작에서만 매칭
+  html = html.replace(/^### (.*)$/gim, '<h3 style="font-size: 1rem; font-weight: 600; margin-top: 1rem; margin-bottom: 0.5rem; color: #191B1C;">$1</h3>');
+  html = html.replace(/^## (.*)$/gim, '<h2 style="font-size: 1.0625rem; font-weight: 600; margin-top: 1rem; margin-bottom: 0.5rem; color: #191B1C;">$1</h2>');
+  html = html.replace(/^# (.*)$/gim, '<h1 style="font-size: 1.125rem; font-weight: 600; margin-top: 1rem; margin-bottom: 0.5rem; color: #191B1C;">$1</h1>');
+
+  // 볼드 처리 (**텍스트**)
+  html = html.replace(/\*\*(.*?)\*\*/g, '<strong style="font-weight: 600;">$1</strong>');
+
+  // 줄바꿈 처리 (HTML 태그 사이의 줄바꿈은 제외)
+  html = html.split('\n').map(line => {
+    // 이미 HTML 태그인 경우 그대로 유지
+    if (line.trim().startsWith('<') && line.trim().endsWith('>')) {
+      return line;
+    }
+    // 빈 줄은 <br />로 변환
+    if (line.trim() === '') {
+      return '<br />';
+    }
+    return line;
+  }).join('\n');
+
+  // 연속된 <br />를 정리
+  html = html.replace(/(<br \/>\s*){3,}/g, '<br /><br />');
+
+  return html;
+}
+
 export function ChatWindow({ activeTab, isOpen, onClose, companyName = '농심' }: ChatWindowProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState('');
@@ -295,17 +357,16 @@ export function ChatWindow({ activeTab, isOpen, onClose, companyName = '농심' 
                         gap: '1rem',
                       }}
                     >
-                      <p
-                        className="text-[#191B1C]"
+                      <div
+                        className="text-[#191B1C] markdown-content"
                         style={{
                           fontFamily: 'Pretendard GOV',
                           fontSize: '0.9375rem',
                           lineHeight: '150%',
                           fontWeight: 400,
                         }}
-                      >
-                        {message.content}
-                      </p>
+                        dangerouslySetInnerHTML={{ __html: formatMarkdown(message.content) }}
+                      />
                     </div>
                   )}
                 </div>
