@@ -150,9 +150,13 @@ function formatMarkdown(text: string): string {
 }
 
 export function ChatWindow({ activeTab, isOpen, onClose, companyName = '농심' }: ChatWindowProps) {
-  const [messages, setMessages] = useState<Message[]>([]);
+  // 탭별로 메시지를 분리하여 저장
+  const [messagesByTab, setMessagesByTab] = useState<Record<string, Message[]>>({});
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  // 현재 탭의 메시지 가져오기
+  const messages = messagesByTab[activeTab] || [];
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [selectedChip, setSelectedChip] = useState<Chip | null>(null);
   const [showSectionQuestions, setShowSectionQuestions] = useState(false);
@@ -211,10 +215,12 @@ export function ChatWindow({ activeTab, isOpen, onClose, companyName = '농심' 
     };
   }, [questionsVisible, questionsForChip]);
 
-  // 탭 변경 시 선택 상태 초기화
+  // 탭 변경 시 선택 상태 초기화 및 스크롤
   useEffect(() => {
     setSelectedChip(null);
     setShowSectionQuestions(false);
+    // 탭 변경 시 스크롤을 맨 아래로
+    setTimeout(() => scrollToBottom(), 100);
   }, [activeTab]);
 
   // 메시지 전송
@@ -228,7 +234,11 @@ export function ChatWindow({ activeTab, isOpen, onClose, companyName = '농심' 
       timestamp: new Date(),
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    // 현재 탭에만 메시지 추가
+    setMessagesByTab(prev => ({
+      ...prev,
+      [activeTab]: [...(prev[activeTab] || []), userMessage],
+    }));
     setInputValue('');
     setIsLoading(true);
 
@@ -251,7 +261,11 @@ export function ChatWindow({ activeTab, isOpen, onClose, companyName = '농심' 
         content: answerText,
         timestamp: new Date(),
       };
-      setMessages(prev => [...prev, assistantMessage]);
+      // 현재 탭에만 메시지 추가
+      setMessagesByTab(prev => ({
+        ...prev,
+        [activeTab]: [...(prev[activeTab] || []), assistantMessage],
+      }));
     } catch {
       const assistantMessage: Message = {
         id: `assistant-${++idRef.current}`,
@@ -259,7 +273,11 @@ export function ChatWindow({ activeTab, isOpen, onClose, companyName = '농심' 
         content: '답변 생성 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
         timestamp: new Date(),
       };
-      setMessages(prev => [...prev, assistantMessage]);
+      // 현재 탭에만 메시지 추가
+      setMessagesByTab(prev => ({
+        ...prev,
+        [activeTab]: [...(prev[activeTab] || []), assistantMessage],
+      }));
     } finally {
       setIsLoading(false);
     }
