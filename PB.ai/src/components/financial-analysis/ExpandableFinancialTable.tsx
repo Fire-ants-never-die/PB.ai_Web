@@ -91,6 +91,8 @@ export function ExpandableFinancialTable({
             const isChildItem = level > 0;
             // 시계열점수, 업종점수는 %를 붙이지 않음
             const isScoreColumn = header.key === 'timeSeriesScore' || header.key === 'industryScore';
+            // 시계열 평균은 소수점 2자리까지만 표시
+            const isTimeSeriesAverage = header.key === 'timeSeriesAverage';
 
             let displayValue: string;
 
@@ -102,6 +104,16 @@ export function ExpandableFinancialTable({
             } else if (isScoreColumn) {
               // 시계열점수, 업종점수: 숫자만 표시 (%, ￦ 없음)
               displayValue = formatNumber(value);
+            } else if (isTimeSeriesAverage) {
+              // 시계열 평균: 소수점 2자리까지만 표시하고 % 추가
+              const numValue = typeof value === 'string'
+                ? parseFloat(value.replace(/,/g, '').replace('%', ''))
+                : value;
+              if (isNaN(numValue)) {
+                displayValue = '-';
+              } else {
+                displayValue = `${numValue.toFixed(2)}%`;
+              }
             } else {
               // 상위항목: % 기호 추가
               displayValue = formatWithPercentage(value);
