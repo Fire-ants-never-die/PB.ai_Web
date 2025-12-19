@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
@@ -33,12 +33,45 @@ export function CompanySearch({ className }: CompanySearchProps) {
   const [searchValue, setSearchValue] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
+  const blurTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  const filteredCompanies = companies.filter((company) =>
-    company.name.toLowerCase().includes(searchValue.toLowerCase())
-  );
+  // 우선순위 회사 ID (농심, CJ제일제당)
+  const priorityCompanyIds = ['004370', '097950']; // 농심, CJ제일제당
+
+  const filteredCompanies = companies
+    .filter((company) => company.name.toLowerCase().includes(searchValue.toLowerCase()))
+    .sort((a, b) => {
+      const aIsPriority = priorityCompanyIds.includes(a.id);
+      const bIsPriority = priorityCompanyIds.includes(b.id);
+
+      // 우선순위 회사가 먼저 오도록
+      if (aIsPriority && !bIsPriority) return -1;
+      if (!aIsPriority && bIsPriority) return 1;
+
+      // 둘 다 우선순위 회사인 경우, 순서 유지 (농심 -> CJ제일제당)
+      if (aIsPriority && bIsPriority) {
+        return priorityCompanyIds.indexOf(a.id) - priorityCompanyIds.indexOf(b.id);
+      }
+
+      // 둘 다 일반 회사인 경우, 원래 순서 유지
+      return 0;
+    });
 
   const handleSelectCompany = (company: Company) => {
+    // blur 타이머 취소 (alert로 인한 blur 이벤트 방지)
+    if (blurTimeoutRef.current) {
+      clearTimeout(blurTimeoutRef.current);
+      blurTimeoutRef.current = null;
+    }
+
+    // 우선순위 회사가 아닌 경우 준비중 메시지 표시
+    if (!priorityCompanyIds.includes(company.id)) {
+      alert('해당 기업의 분석 서비스는 준비 중입니다.\n곧 만나보실 수 있습니다.');
+      setIsOpen(false);
+      setSearchValue('');
+      return;
+    }
+
     // 회사 선택 시 CompanyOverview 페이지로 이동하고 회사 ID 전달
     navigate(`/company?code=${company.id}&name=${encodeURIComponent(company.name)}`);
     setIsOpen(false);
@@ -51,12 +84,20 @@ export function CompanySearch({ className }: CompanySearchProps) {
   };
 
   const handleInputFocus = () => {
+    // blur 타이머가 있다면 취소 (다시 focus 시 드롭다운이 열리도록)
+    if (blurTimeoutRef.current) {
+      clearTimeout(blurTimeoutRef.current);
+      blurTimeoutRef.current = null;
+    }
     setIsOpen(true);
   };
 
   const handleInputBlur = () => {
     // 드롭다운 클릭을 위해 약간의 지연
-    setTimeout(() => setIsOpen(false), 200);
+    blurTimeoutRef.current = setTimeout(() => {
+      setIsOpen(false);
+      blurTimeoutRef.current = null;
+    }, 200);
   };
 
   const handleMouseDown = (e: React.MouseEvent) => {

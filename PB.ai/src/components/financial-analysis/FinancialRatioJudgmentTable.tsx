@@ -1,16 +1,53 @@
-import type { RatioJudgmentRow } from '@/lib/types/company';
+import type { RatioJudgmentRow, HealthCategory } from '@/lib/types/company';
 import { cn } from '@/lib/utils';
 import { formatValue } from '@/lib/utils/format';
 
 interface FinancialRatioJudgmentTableProps {
   data: RatioJudgmentRow[];
+  healthCategories?: HealthCategory[];
   className?: string;
 }
 
 export function FinancialRatioJudgmentTable({
   data,
+  healthCategories,
   className,
 }: FinancialRatioJudgmentTableProps) {
+  // 디버깅: 데이터 확인
+  console.log('FinancialRatioJudgmentTable - data:', data);
+  console.log('FinancialRatioJudgmentTable - healthCategories:', healthCategories);
+
+  // healthCategories를 컬럼별로 매핑
+  const getStatusForColumn = (columnName: string): string => {
+    if (!healthCategories) return '';
+
+    const mapping: Record<string, string> = {
+      stability: '유동성',
+      leverage: '레버리지',
+      investmentProfitability: '투자수익성',
+      salesMargin: '판매마진',
+      activity: '활동성',
+      growth: '성장성',
+    };
+
+    const categoryLabel = mapping[columnName];
+    const category = healthCategories.find(cat => cat.label === categoryLabel);
+    return category?.status || '';
+  };
+
+  // 상태에 따른 색상 반환
+  const getStatusColor = (status: string): string => {
+    switch (status) {
+      case '안전':
+        return '#4CAF50'; // 녹색
+      case '경고':
+        return '#FF9800'; // 주황색
+      case '위험':
+        return '#F44336'; // 빨간색
+      default:
+        return '#191B1C';
+    }
+  };
   return (
     <div className={cn('w-full', className)}>
       <div className="relative w-full overflow-auto">
@@ -97,9 +134,126 @@ export function FinancialRatioJudgmentTable({
             </tr>
           </thead>
           <tbody>
-            {data.map((item, index) => (
+            {data.map((item, index) => {
+              const isJudgmentRow = item.indicator === '지표 판정';
+              const isScoreRow = item.indicator === '지표 점수';
+
+              return (
+                <tr
+                  key={`row-${index}-${item.indicator}`}
+                  className="group transition-colors hover:bg-[#F5F5F6]"
+                  style={{ borderBottom: '1px solid #D7D9DB' }}
+                >
+                  <td
+                    colSpan={2}
+                    className="px-4 py-3 text-[0.875rem] font-semibold text-[#191B1C] leading-[150%] text-left"
+                    style={{ fontFamily: 'var(--typography-type, "Pretendard GOV")' }}
+                  >
+                    {formatValue(item.indicator)}
+                  </td>
+                  <td
+                    colSpan={1}
+                    className="px-4 py-3 text-[0.875rem] font-normal text-[#191B1C] leading-[150%] text-center"
+                    style={{ fontFamily: 'var(--typography-type, "Pretendard GOV")' }}
+                  >
+                    {isJudgmentRow && healthCategories ? (
+                      <div className="flex flex-col items-center gap-1">
+                        {item.stability && <span>{formatValue(item.stability)}</span>}
+                        <span className="text-[0.875rem] font-normal text-[#191B1C]">
+                          {getStatusForColumn('stability')}
+                        </span>
+                      </div>
+                    ) : (
+                      formatValue(item.stability)
+                    )}
+                  </td>
+                  <td
+                    colSpan={1}
+                    className="px-4 py-3 text-[0.875rem] font-normal text-[#191B1C] leading-[150%] text-center"
+                    style={{ fontFamily: 'var(--typography-type, "Pretendard GOV")' }}
+                  >
+                    {isJudgmentRow && healthCategories ? (
+                      <div className="flex flex-col items-center gap-1">
+                        {item.leverage && <span>{formatValue(item.leverage)}</span>}
+                        <span className="text-[0.875rem] font-normal text-[#191B1C]">
+                          {getStatusForColumn('leverage')}
+                        </span>
+                      </div>
+                    ) : (
+                      formatValue(item.leverage)
+                    )}
+                  </td>
+                  <td
+                    colSpan={1}
+                    className="px-4 py-3 text-[0.875rem] font-normal text-[#191B1C] leading-[150%] text-center"
+                    style={{ fontFamily: 'var(--typography-type, "Pretendard GOV")' }}
+                  >
+                    {isJudgmentRow && healthCategories ? (
+                      <div className="flex flex-col items-center gap-1">
+                        {item.investmentProfitability && <span>{formatValue(item.investmentProfitability)}</span>}
+                        <span className="text-[0.875rem] font-normal text-[#191B1C]">
+                          {getStatusForColumn('investmentProfitability')}
+                        </span>
+                      </div>
+                    ) : (
+                      formatValue(item.investmentProfitability)
+                    )}
+                  </td>
+                  <td
+                    colSpan={1}
+                    className="px-4 py-3 text-[0.875rem] font-normal text-[#191B1C] leading-[150%] text-center"
+                    style={{ fontFamily: 'var(--typography-type, "Pretendard GOV")' }}
+                  >
+                    {isJudgmentRow && healthCategories ? (
+                      <div className="flex flex-col items-center gap-1">
+                        {item.salesMargin && <span>{formatValue(item.salesMargin)}</span>}
+                        <span className="text-[0.875rem] font-normal text-[#191B1C]">
+                          {getStatusForColumn('salesMargin')}
+                        </span>
+                      </div>
+                    ) : (
+                      formatValue(item.salesMargin)
+                    )}
+                  </td>
+                  <td
+                    colSpan={2}
+                    className="px-4 py-3 text-[0.875rem] font-normal text-[#191B1C] leading-[150%] text-center"
+                    style={{ fontFamily: 'var(--typography-type, "Pretendard GOV")' }}
+                  >
+                    {isJudgmentRow && healthCategories ? (
+                      <div className="flex flex-col items-center gap-1">
+                        {item.activity && <span>{formatValue(item.activity)}</span>}
+                        <span className="text-[0.875rem] font-normal text-[#191B1C]">
+                          {getStatusForColumn('activity')}
+                        </span>
+                      </div>
+                    ) : (
+                      formatValue(item.activity)
+                    )}
+                  </td>
+                  <td
+                    colSpan={2}
+                    className="px-4 py-3 text-[0.875rem] font-normal text-[#191B1C] leading-[150%] text-center"
+                    style={{ fontFamily: 'var(--typography-type, "Pretendard GOV")' }}
+                  >
+                    {isJudgmentRow && healthCategories ? (
+                      <div className="flex flex-col items-center gap-1">
+                        {item.growth && <span>{formatValue(item.growth)}</span>}
+                        <span className="text-[0.875rem] font-normal text-[#191B1C]">
+                          {getStatusForColumn('growth')}
+                        </span>
+                      </div>
+                    ) : (
+                      formatValue(item.growth)
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
+            {/* healthCategories가 있지만 "지표 판정" 행이 데이터에 없는 경우, 상태 행 추가 */}
+            {healthCategories && !data.find(row => row.indicator === '지표 판정') && (
               <tr
-                key={index}
+                key="judgment-row-status"
                 className="group transition-colors hover:bg-[#F5F5F6]"
                 style={{ borderBottom: '1px solid #D7D9DB' }}
               >
@@ -108,52 +262,76 @@ export function FinancialRatioJudgmentTable({
                   className="px-4 py-3 text-[0.875rem] font-semibold text-[#191B1C] leading-[150%] text-left"
                   style={{ fontFamily: 'var(--typography-type, "Pretendard GOV")' }}
                 >
-                  {formatValue(item.indicator)}
+                  지표 판정
                 </td>
                 <td
                   colSpan={1}
                   className="px-4 py-3 text-[0.875rem] font-normal text-[#191B1C] leading-[150%] text-center"
                   style={{ fontFamily: 'var(--typography-type, "Pretendard GOV")' }}
                 >
-                  {formatValue(item.stability)}
+                  <div className="flex flex-col items-center gap-1">
+                    <span className="text-[0.875rem] font-normal text-[#191B1C]">
+                      {getStatusForColumn('stability')}
+                    </span>
+                  </div>
                 </td>
                 <td
                   colSpan={1}
                   className="px-4 py-3 text-[0.875rem] font-normal text-[#191B1C] leading-[150%] text-center"
                   style={{ fontFamily: 'var(--typography-type, "Pretendard GOV")' }}
                 >
-                  {formatValue(item.leverage)}
+                  <div className="flex flex-col items-center gap-1">
+                    <span className="text-[0.875rem] font-normal text-[#191B1C]">
+                      {getStatusForColumn('leverage')}
+                    </span>
+                  </div>
                 </td>
                 <td
                   colSpan={1}
                   className="px-4 py-3 text-[0.875rem] font-normal text-[#191B1C] leading-[150%] text-center"
                   style={{ fontFamily: 'var(--typography-type, "Pretendard GOV")' }}
                 >
-                  {formatValue(item.investmentProfitability)}
+                  <div className="flex flex-col items-center gap-1">
+                    <span className="text-[0.875rem] font-normal text-[#191B1C]">
+                      {getStatusForColumn('investmentProfitability')}
+                    </span>
+                  </div>
                 </td>
                 <td
                   colSpan={1}
                   className="px-4 py-3 text-[0.875rem] font-normal text-[#191B1C] leading-[150%] text-center"
                   style={{ fontFamily: 'var(--typography-type, "Pretendard GOV")' }}
                 >
-                  {formatValue(item.salesMargin)}
+                  <div className="flex flex-col items-center gap-1">
+                    <span className="text-[0.875rem] font-normal text-[#191B1C]">
+                      {getStatusForColumn('salesMargin')}
+                    </span>
+                  </div>
                 </td>
                 <td
                   colSpan={2}
                   className="px-4 py-3 text-[0.875rem] font-normal text-[#191B1C] leading-[150%] text-center"
                   style={{ fontFamily: 'var(--typography-type, "Pretendard GOV")' }}
                 >
-                  {formatValue(item.activity)}
+                  <div className="flex flex-col items-center gap-1">
+                    <span className="text-[0.875rem] font-normal text-[#191B1C]">
+                      {getStatusForColumn('activity')}
+                    </span>
+                  </div>
                 </td>
                 <td
                   colSpan={2}
                   className="px-4 py-3 text-[0.875rem] font-normal text-[#191B1C] leading-[150%] text-center"
                   style={{ fontFamily: 'var(--typography-type, "Pretendard GOV")' }}
                 >
-                  {formatValue(item.growth)}
+                  <div className="flex flex-col items-center gap-1">
+                    <span className="text-[0.875rem] font-normal text-[#191B1C]">
+                      {getStatusForColumn('growth')}
+                    </span>
+                  </div>
                 </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
 

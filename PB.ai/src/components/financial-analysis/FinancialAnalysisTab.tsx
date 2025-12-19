@@ -159,7 +159,10 @@ export function FinancialAnalysisTab({ companyCode }: FinancialAnalysisTabProps)
 
         {/* 재무 비율 판정 표 */}
         <div className="mt-0">
-          <FinancialRatioJudgmentTable data={ratioJudgmentData.ratioJudgmentTable} />
+          <FinancialRatioJudgmentTable
+            data={ratioJudgmentData.ratioJudgmentTable}
+            healthCategories={ratioJudgmentData.financialHealth.healthCategories}
+          />
         </div>
       </div>
 

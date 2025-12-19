@@ -58,7 +58,7 @@ function CustomTooltip({ active, payload }: any) {
         className="text-[12px] text-center text-[#58595B] leading-normal"
         style={{ fontFamily: '"Pretendard GOV", sans-serif' }}
       >
-        {data.year}
+        {data.year === '2025' ? '2025/06' : data.year}
       </p>
       <div className="flex flex-col gap-0.5">
         <div className="flex gap-1.5 items-center">
@@ -160,6 +160,11 @@ export function NetIncomeChart({ data, className }: NetIncomeChartProps) {
     return `${value}${yAxisConfig.unit}`;
   };
 
+  // X축 틱 포맷터 - "2025"를 "2025/06"으로 변환
+  const xAxisTickFormatter = (value: string) => {
+    return value === '2025' ? '2025/06' : value;
+  };
+
   return (
     <div className={className}>
       <style>{`
@@ -204,6 +209,7 @@ export function NetIncomeChart({ data, className }: NetIncomeChartProps) {
 
           <XAxis
             dataKey="year"
+            tickFormatter={xAxisTickFormatter}
             tick={{ fill: '#58595B', fontSize: 12 }}
             tickLine={false}
             axisLine={{ stroke: '#D7D9DB' }}

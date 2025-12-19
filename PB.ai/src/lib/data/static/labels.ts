@@ -15,7 +15,7 @@ export const SIDEBAR_MENU = {
   portfolio: '포트폴리오',
   recentReports: '종목 리포트',
   agriculture: '농심',
-  electronics: '삼성전자',
+  electronics: 'CJ제일제당',
   suggestions: '제팅',
 } as const;
 

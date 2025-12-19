@@ -43,7 +43,7 @@ export function Sidebar({ isCollapsed, onToggle, className }: SidebarProps) {
     },
     {
       name: SIDEBAR_MENU.electronics,
-      code: '',
+      code: '097950',
     },
   ];
 

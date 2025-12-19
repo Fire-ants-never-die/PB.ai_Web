@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
-import { formatValue, formatNumber } from '@/lib/utils/format';
+import { formatValue, formatNumber, formatCurrencyKorean, formatWithPercentage } from '@/lib/utils/format';
 import type { TableHeader } from '@/lib/types/company';
 
 interface ExpandableFinancialTableProps {
@@ -26,14 +26,37 @@ export function ExpandableFinancialTable({
     setExpandedItems(newExpanded);
   };
 
-  const renderRow = (item: any, level: number = 0) => {
-    const isExpanded = expandedItems.has(item.name);
-    const hasChildren = item.children && item.children.length > 0;
+  // 텍스트를 16자 단위로 줄바꿈하는 함수
+  const formatLongText = (text: string): React.ReactNode => {
+    if (text.length <= 16) {
+      return text;
+    }
+
+    const chunks: string[] = [];
+    for (let i = 0; i < text.length; i += 16) {
+      chunks.push(text.slice(i, i + 16));
+    }
 
     return (
       <>
+        {chunks.map((chunk, index) => (
+          <React.Fragment key={index}>
+            {chunk}
+            {index < chunks.length - 1 && <br />}
+          </React.Fragment>
+        ))}
+      </>
+    );
+  };
+
+  const renderRow = (item: any, level: number = 0, parentKey: string = '') => {
+    const isExpanded = expandedItems.has(item.name);
+    const hasChildren = item.children && item.children.length > 0;
+    const rowKey = parentKey ? `${parentKey}-${item.name}` : item.name;
+
+    return (
+      <React.Fragment key={rowKey}>
         <tr
-          key={item.name}
           className="group transition-colors hover:bg-[#F5F5F6]"
           style={{ borderBottom: '1px solid #D7D9DB' }}
         >
@@ -45,11 +68,11 @@ export function ExpandableFinancialTable({
             }}
           >
             <div className="flex items-center gap-2">
-              <span className="font-semibold">{item.name}</span>
+              <span className="font-semibold">{formatLongText(item.name)}</span>
               {hasChildren && (
                 <button
                   onClick={() => toggleExpand(item.name)}
-                  className="flex items-center justify-center w-4 h-4 hover:opacity-70 transition-opacity -mt-0.5"
+                  className="flex items-center justify-center w-4 h-4 hover:opacity-70 transition-opacity -mt-0.5 flex-shrink-0"
                   aria-label={isExpanded ? '축소' : '확장'}
                 >
                   {isExpanded ? (
@@ -63,9 +86,26 @@ export function ExpandableFinancialTable({
           </td>
           {headers.slice(1).map((header) => {
             const value = item.values[header.key];
-            const displayValue = typeof value === 'number'
-              ? formatNumber(value)
-              : formatValue(value);
+
+            // 하위항목인지 확인 (level > 0이면 하위항목)
+            const isChildItem = level > 0;
+            // 시계열점수, 업종점수는 %를 붙이지 않음
+            const isScoreColumn = header.key === 'timeSeriesScore' || header.key === 'industryScore';
+
+            let displayValue: string;
+
+            if (value === null || value === undefined || value === '') {
+              displayValue = '-';
+            } else if (isChildItem) {
+              // 하위항목: ￦ 기호와 조/억 단위로 포맷팅
+              displayValue = formatCurrencyKorean(value);
+            } else if (isScoreColumn) {
+              // 시계열점수, 업종점수: 숫자만 표시 (%, ￦ 없음)
+              displayValue = formatNumber(value);
+            } else {
+              // 상위항목: % 기호 추가
+              displayValue = formatWithPercentage(value);
+            }
 
             return (
               <td
@@ -80,14 +120,10 @@ export function ExpandableFinancialTable({
         </tr>
         {hasChildren && isExpanded && item.children && (
           <>
-            {item.children.map((child: any) => (
-              <React.Fragment key={child.name}>
-                {renderRow(child, level + 1)}
-              </React.Fragment>
-            ))}
+            {item.children.map((child: any) => renderRow(child, level + 1, rowKey))}
           </>
         )}
-      </>
+      </React.Fragment>
     );
   };
 

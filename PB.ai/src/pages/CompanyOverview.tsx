@@ -43,12 +43,14 @@ const CompanyOverview = () => {
   // 회사 코드에 따른 로고/타이틀 이미지 매핑 (하드코딩)
   const getCompanyAssets = (code: string) => {
     const assetMap: Record<string, { logo: string; title: string }> = {
-      '001234': { logo: '/nongshim_logo.svg', title: '/nongshim_title.png' },
+      '001234': { logo: '/nongshim_logo.svg', title: '/nongshim_logo.svg' },
+      '004370': { logo: '/nongshim_logo.svg', title: '/nongshim_logo.svg' }, // 농심
+      '097950': { logo: '/cj_logo.png', title: '/cj_logo.png' }, // CJ제일제당
       'cj': { logo: '/cj_logo.png', title: '/cj_logo.png' },
       'pb': { logo: '/pb_logo.svg', title: '/pb_logo.svg' },
       // 추가 기업들 매핑
     };
-    return assetMap[code] || { logo: '/nongshim_logo.svg', title: '/nongshim_title.png' };
+    return assetMap[code] || { logo: '/nongshim_logo.svg', title: '/nongshim_logo.svg' };
   };
 
   const companyAssets = getCompanyAssets(companyCode);
@@ -154,15 +156,35 @@ const CompanyOverview = () => {
 
   return (
     <PageLayout title="">
-      <div className="max-w-[920px] mx-auto">
-        {/* 로고 이미지 - CompanyTabs 바로 위에 왼쪽 정렬 (하드코딩) */}
-        <div className="mb-6">
+      <div
+        key={companyCode}
+        className="max-w-[920px] mx-auto"
+        style={{ animation: 'fadeIn 0.2s ease-out' }}
+      >
+        {/* 로고 이미지와 회사명 - CompanyTabs 바로 위에 왼쪽 정렬 */}
+        <div className="mb-6 flex items-center gap-4">
           <img
             src={companyAssets.title}
             alt={`${companyName} 로고`}
-            className="h-auto"
-            style={{ maxHeight: '60px' }}
+            style={{
+              width: '2.99038rem',
+              height: '2.47281rem',
+            }}
           />
+          <h1
+            style={{
+              color: 'var(--color-gray-900, #191B1C)',
+              fontFamily: 'var(--typography-type, "Pretendard GOV")',
+              fontSize: '2.25rem',
+              fontStyle: 'normal',
+              fontWeight: 700,
+              lineHeight: '150%',
+              margin: 0,
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {companyName}({companyCode})
+          </h1>
         </div>
         <CompanyTabs activeTab={activeTab} onTabChange={setActiveTab} />
         <div className="mt-8">

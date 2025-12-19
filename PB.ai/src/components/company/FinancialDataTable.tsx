@@ -25,7 +25,7 @@ function formatToEok(value: number | null | undefined): string {
     return '-';
   }
   const eok = value / 100000000;
-  return `${eok.toLocaleString('ko-KR', { maximumFractionDigits: 0 })}억`;
+  return `￦${eok.toLocaleString('ko-KR', { maximumFractionDigits: 0 })}억`;
 }
 
 export function FinancialDataTable({ data, className }: FinancialDataTableProps) {
@@ -35,7 +35,12 @@ export function FinancialDataTable({ data, className }: FinancialDataTableProps)
       {
         accessorKey: 'year',
         header: '년도',
-        cell: ({ row }) => row.original.year || '-',
+        cell: ({ row }) => {
+          const year = row.original.year;
+          if (!year) return '-';
+          // "2025"로 오면 "2025/06"으로 표시
+          return year === '2025' ? '2025/06' : year;
+        },
       },
       {
         accessorKey: 'revenue',
