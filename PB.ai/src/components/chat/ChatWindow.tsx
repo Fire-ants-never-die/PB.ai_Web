@@ -31,13 +31,68 @@ const tabLabels: Record<string, string> = {
 function formatMarkdown(text: string): string {
   if (!text) return '';
 
-  // 리스트 처리 - 먼저 리스트를 처리 (다른 마크다운보다 먼저)
+  // 테이블 처리 - 먼저 테이블을 처리
   const lines = text.split('\n');
   const processedLines: string[] = [];
   let inList = false;
+  let inTable = false;
+  let tableHeaders: string[] = [];
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
+    const isTableRow = /^\s*\|.+\|\s*$/.test(line);
+    const isTableSeparator = /^\s*\|[\s\-:]+\|\s*$/.test(line);
+
+    if (isTableSeparator) {
+      // 테이블 구분선 - 헤더와 데이터를 구분
+      if (tableHeaders.length > 0 && !inTable) {
+        inTable = true;
+        processedLines.push('<table style="width: 100%; border-collapse: collapse; margin-top: 0.75rem; margin-bottom: 0.75rem;">');
+        processedLines.push('<thead>');
+        processedLines.push('<tr>');
+        tableHeaders.forEach(header => {
+          processedLines.push(`<th style="border: 1px solid #D7D9DB; padding: 0.5rem 0.75rem; text-align: left; background-color: #F7F8FA; font-weight: 600; font-size: 0.9375rem;">${header.trim()}</th>`);
+        });
+        processedLines.push('</tr>');
+        processedLines.push('</thead>');
+        processedLines.push('<tbody>');
+        tableHeaders = [];
+      }
+      continue;
+    }
+
+    if (isTableRow) {
+      // 리스트가 열려있으면 먼저 닫기
+      if (inList) {
+        processedLines.push('</ul>');
+        inList = false;
+      }
+
+      const cells = line.split('|').map(cell => cell.trim()).filter(cell => cell !== '');
+
+      if (!inTable) {
+        // 헤더 행
+        tableHeaders = cells;
+      } else {
+        // 데이터 행
+        processedLines.push('<tr>');
+        cells.forEach(cell => {
+          processedLines.push(`<td style="border: 1px solid #D7D9DB; padding: 0.5rem 0.75rem; font-size: 0.9375rem;">${cell}</td>`);
+        });
+        processedLines.push('</tr>');
+      }
+      continue;
+    }
+
+    // 테이블이 열려있고 테이블 행이 아니면 테이블 닫기
+    if (inTable && !isTableRow) {
+      processedLines.push('</tbody>');
+      processedLines.push('</table>');
+      inTable = false;
+      tableHeaders = [];
+    }
+
+    // 리스트 처리
     const isListItem = /^\s*-\s+(.+)$/.test(line);
 
     if (isListItem) {
@@ -56,6 +111,11 @@ function formatMarkdown(text: string): string {
     }
   }
 
+  // 마지막에 열려있는 테이블이나 리스트 닫기
+  if (inTable) {
+    processedLines.push('</tbody>');
+    processedLines.push('</table>');
+  }
   if (inList) {
     processedLines.push('</ul>');
   }
