@@ -33,7 +33,7 @@ export function CompanySearch({ className }: CompanySearchProps) {
   const [searchValue, setSearchValue] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
-  const blurTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const blurTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // 우선순위 회사 ID (농심, CJ제일제당)
   const priorityCompanyIds = ['004370', '097950']; // 농심, CJ제일제당

@@ -35,19 +35,6 @@ export function FinancialRatioJudgmentTable({
     return category?.status || '';
   };
 
-  // 상태에 따른 색상 반환
-  const getStatusColor = (status: string): string => {
-    switch (status) {
-      case '안전':
-        return '#4CAF50'; // 녹색
-      case '경고':
-        return '#FF9800'; // 주황색
-      case '위험':
-        return '#F44336'; // 빨간색
-      default:
-        return '#191B1C';
-    }
-  };
   return (
     <div className={cn('w-full', className)}>
       <div className="relative w-full overflow-auto">
@@ -136,7 +123,6 @@ export function FinancialRatioJudgmentTable({
           <tbody>
             {data.map((item, index) => {
               const isJudgmentRow = item.indicator === '지표 판정';
-              const isScoreRow = item.indicator === '지표 점수';
 
               return (
                 <tr

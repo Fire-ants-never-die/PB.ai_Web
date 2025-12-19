@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
-import { formatValue, formatNumber, formatCurrencyKorean, formatWithPercentage } from '@/lib/utils/format';
+import { formatNumber, formatCurrencyKorean, formatWithPercentage } from '@/lib/utils/format';
 import type { TableHeader } from '@/lib/types/company';
 
 interface ExpandableFinancialTableProps {
