@@ -9,7 +9,11 @@ import type {
   FinancialAnalysisDetails,
 } from '@/lib/types/company';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api/v1';
+const API_BASE_URL = (() => {
+  const base = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+  const trimmed = base.replace(/\/+$/, '');
+  return trimmed.endsWith('/api/v1') ? trimmed : `${trimmed}/api/v1`;
+})();
 
 // API 호출 헬퍼 함수
 async function fetchApi<T>(endpoint: string): Promise<T> {
