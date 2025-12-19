@@ -13,7 +13,7 @@ export const tabSections: Record<string, string[]> = {
     '안정성 분석',
     '수익성 분석',
     '성장성 분석',
-    '활동성분석',
+    '활동성 분석',
   ],
   investment: [
     'Per Share (주당 지표)',
